@@ -1,13 +1,139 @@
-<html>
-  <head>
-    <title>Color filter photobooth</title>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="styles.css">
-  </head>
-  <body>
-    <p>
-      hello world
-    </p>
-    <script src="index.js"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MatrixBooth — Test</title>
+  <link rel="stylesheet" href="photobooth.css">
+</head>
+<body>
+
+  <!-- Camera flash overlay (fixed, full-screen) -->
+  <div id="flash"></div>
+
+  <!-- Hidden canvas used for photo capture -->
+  <canvas id="capture-canvas"></canvas>
+
+
+  <!-- ═══════════════════════════════════════════════
+       SCREEN 1 · HOMEPAGE
+  ════════════════════════════════════════════════ -->
+  <section id="home-screen" class="screen active">
+
+    <div class="home-content">
+      <h1>MatrixBooth</h1>
+      <p class="subtitle">Take photos and apply linear-algebra–powered color filters.</p>
+
+      <div class="home-actions">
+        <button id="start-btn" class="btn btn-primary">▶ Start Photobooth</button>
+        <button id="upload-btn-toggle" class="btn btn-secondary">↑ Upload Images</button>
+      </div>
+
+      <!-- Upload zone (hidden until the upload button is clicked) -->
+      <div id="upload-zone" class="upload-zone">
+        <input id="upload-input" type="file" accept="image/*" multiple>
+        <p>Click to browse or drag & drop images here</p>
+        <p id="upload-count"></p>
+        <div id="upload-preview" class="upload-preview"></div>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════
+       SCREEN 2 · COUNTDOWN
+  ════════════════════════════════════════════════ -->
+  <section id="countdown-screen" class="screen">
+
+    <div class="cd-top">
+      <span id="shot-indicator">Shot 1 of 3</span>
+      <button id="back-btn" class="btn btn-ghost">← Back</button>
+    </div>
+
+    <!-- Frame size controls -->
+    <div class="frame-controls">
+
+      <!-- Aspect-ratio presets (data-w / data-h required by JS) -->
+      <div class="presets">
+        <button class="preset-btn active" data-w="480" data-h="360">4:3</button>
+        <button class="preset-btn"        data-w="480" data-h="270">16:9</button>
+        <button class="preset-btn"        data-w="360" data-h="360">1:1</button>
+        <button class="preset-btn"        data-w="360" data-h="480">3:4 Portrait</button>
+      </div>
+
+      <!-- Manual width / height sliders -->
+      <div class="slider-row">
+        <label>
+          Width
+          <input id="frame-w" type="range" min="240" max="720" value="480" step="10">
+          <span id="frame-w-val">480</span>px
+        </label>
+        <label>
+          Height
+          <input id="frame-h" type="range" min="180" max="540" value="360" step="10">
+          <span id="frame-h-val">360</span>px
+        </label>
+      </div>
+    </div>
+
+    <!-- Camera viewport -->
+    <div id="camera-frame" class="camera-frame">
+
+      <video id="camera-video" autoplay playsinline muted></video>
+
+      <!-- Shown when camera permission is denied -->
+      <div id="camera-error" class="camera-error">
+        <h3>Camera unavailable</h3>
+        <p>Please allow camera access in your browser and reload the page.</p>
+      </div>
+
+      <!-- Countdown overlay (lives inside the frame) -->
+      <div id="countdown-overlay" class="countdown-overlay hidden">
+        <span id="countdown-number"></span>
+        <span id="countdown-message"></span>
+      </div>
+
+    </div>
+
+    <!-- Captured shot thumbnails -->
+    <div id="shots-strip" class="shots-strip"></div>
+
+    <!-- Primary action button -->
+    <button id="shoot-btn" class="btn btn-primary">Start Countdown</button>
+
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════
+       SCREEN 3 · FRAME & FILTER SELECTION  (stub)
+       Your team fills this in — JS hands off here via
+       the 'photobooth:shotsComplete' custom event.
+  ════════════════════════════════════════════════ -->
+  <section id="frame-screen" class="screen">
+    <div class="stub">
+      <h2>Frame &amp; Filter Selection</h2>
+      <p>Screen 3 goes here.<br>Captured shots are in <code>PhotoBoothApp.capturedShots</code>.</p>
+      <div id="stub-thumbs" class="upload-preview"></div>
+    </div>
+  </section>
+
+
+  <script src="photobooth.js"></script>
+
+  <!-- Stub: preview captured shots when landing on screen 3 -->
+  <script>
+    window.addEventListener('photobooth:shotsComplete', (e) => {
+      const container = document.getElementById('stub-thumbs');
+      container.innerHTML = '';
+      e.detail.shots.forEach(src => {
+        const img = document.createElement('img');
+        img.src = src;
+        img.className = 'upload-thumb';
+        container.appendChild(img);
+      });
+    });
+  </script>
+
+</body>
 </html>
