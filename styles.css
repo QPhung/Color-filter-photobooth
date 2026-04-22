@@ -53,10 +53,10 @@ body {
 }
 
 .member img {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    border: 1px solid var(--dark);
+    width: 100px;
+    height: 100px;
+    border-radius: 25%;
+    border: 3px solid var(--dark);
     display: block;
     margin-bottom: 10px;
 }
