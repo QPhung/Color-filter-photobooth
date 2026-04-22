@@ -1,79 +1,40 @@
-
-const pages = document.querySelectorAll('.page');
-const video = document.getElementById('webcam');
-const canvas = document.getElementById('capture-canvas');
-const countdownEl = document.getElementById('countdown-overlay');
-let capturedImages = [];
-
 function navigateTo(pageId) {
-    pages.forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
-}
 
-// 1. Start Webcam
-async function startBooth() {
-    navigateTo('page-camera');
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        video.srcObject = stream;
-    } catch (err) {
-        alert("Webcam access denied or not found.");
+    const strip = document.getElementById('main-photo-strip');
+    if(pageId === 'page-filters') {
+        document.getElementById('filter-preview-area').innerHTML = '';
+        document.getElementById('filter-preview-area').appendChild(strip.cloneNode(true));
+    }
+    if(pageId === 'page-end') {
+        document.getElementById('final-result-container').innerHTML = '';
+        document.getElementById('final-result-container').appendChild(strip.cloneNode(true));
     }
 }
 
-// 2. Countdown Logic
+async function startBooth() {
+    navigateTo('page-camera');
+    const video = document.getElementById('webcam');
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.srcObject = stream;
+}
+
+function setFrame(color) {
+    const strip = document.getElementById('main-photo-strip');
+    strip.className = 'photo-strip frame-' + color;
+}
+
 function beginSequence() {
     let count = 5;
-    capturedImages = []; // Reset
-    const btn = document.getElementById('start-timer-btn');
-    btn.disabled = true;
-
+    const overlay = document.getElementById('countdown-overlay');
     const timer = setInterval(() => {
-        countdownEl.innerText = count;
-        
+        overlay.innerText = count;
         if (count === 0) {
             clearInterval(timer);
-            countdownEl.innerText = "SMILE!";
-            takePhoto();
-            setTimeout(() => {
-                countdownEl.innerText = "";
-                navigateTo('page-frames');
-                stopCamera();
-            }, 1000);
+            overlay.innerText = "CHEESE!";
+            setTimeout(() => { navigateTo('page-frames'); }, 1000);
         }
         count--;
     }, 1000);
-}
-
-function takePhoto() {
-    const context = canvas.getContext('2d');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    
-    const data = canvas.toDataURL('image/png');
-    capturedImages.push(data);
-    // In a real loop, you'd repeat this 4 times for the strip
-}
-
-function stopCamera() {
-    const stream = video.srcObject;
-    if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-    }
-}
-
-// 3. Handle File Upload (Alternative Path)
-function handleUpload(input) {
-    if (input.files && input.files[0]) {
-        // Just logic to jump to frames after upload
-        navigateTo('page-frames');
-    }
-}
-
-// 4. Frame selection helper
-function setFrame(color) {
-    const display = document.querySelector('.strip-container');
-    display.className = `strip-container color-${color}`;
-    // You'd inject capturedImages here as <img> tags
 }
