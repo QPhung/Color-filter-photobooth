@@ -1,13 +1,107 @@
-<html>
-  <head>
-    <title>Color filter photobooth</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="styles.css">
-  </head>
-  <body>
-    <p>
-      hello world
-    </p>
-    <script src="index.js"></script>
-  </body>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EigenBooth | A Linear Transformation Experience</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Irish+Grover&family=Saira+Stencil+One&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <main id="app">
+        <section id="page-home" class="page active">
+            <header class="hero">
+                <h1 class="irish-font">Welcome to EigenBooth</h1>
+                <h2 class="irish-font">A Linear Transformation Experience</h2>
+                <button class="btn-main" onclick="navigateTo('page-upload')">Start your amazing journey here</button>
+            </header>
+            
+            <div class="team-section">
+                <p class="irish-font">Let's meet our incredible team</p>
+                <div class="team-grid">
+                    <div class="member"><img src="assets/cat1.png" alt="Cat 1"><span class="irish-font">Phuong Linh</span></div>
+                    <div class="member"><img src="assets/cat2.png" alt="Cat 2"><span class="irish-font">Quy Phung</span></div>
+                    <div class="member"><img src="assets/cat3.png" alt="Cat 3"><span class="irish-font">Quang Minh</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-upload" class="page">
+            <div class="booth-card">
+                <h1 class="stencil-font">EigenBooth</h1>
+                <p>Take photos and apply linear-algebra-powered color filters.</p>
+                <div class="btn-group">
+                    <button class="btn-action red" onclick="startBooth()">Start Photobooth</button>
+                    <label class="btn-action yellow">
+                        Upload Images
+                        <input type="file" id="imageUpload" hidden accept="image/*" multiple onchange="handleUpload(this)">
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-camera" class="page">
+            <div class="camera-container">
+                <video id="webcam" autoplay playsinline></video>
+                <div id="countdown-overlay" class="stencil-font"></div>
+                <canvas id="capture-canvas" style="display:none;"></canvas>
+            </div>
+            <div class="camera-controls">
+                <div class="preview-slots">
+                    <div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div>
+                </div>
+                <button id="start-timer-btn" class="btn-action red" onclick="beginSequence()">Start Countdown</button>
+            </div>
+        </section>
+
+        <section id="page-frames" class="page">
+            <div class="selection-layout">
+                <div class="frame-preview-box" id="frame-display">
+                    <div class="strip-container color-yellow"></div>
+                </div>
+                <div class="options-sidebar">
+                    <h3>Choose Frame you love:</h3>
+                    <div class="icon-grid">
+                        <button class="icon-btn yellow" onclick="setFrame('yellow')">☕</button>
+                        <button class="icon-btn green" onclick="setFrame('green')">🍃</button>
+                        <button class="icon-btn red" onclick="setFrame('red')">☁️</button>
+                    </div>
+                    <button class="btn-next" onclick="navigateTo('page-filters')">Next →</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-filters" class="page">
+            <div class="selection-layout">
+                <div class="frame-preview-box" id="filtered-display"></div>
+                <div class="options-sidebar">
+                    <h3>Choose Filter you love:</h3>
+                    <div class="filter-placeholders">
+                        <div class="box"></div><div class="box"></div><div class="box"></div>
+                    </div>
+                    <div class="graph-container">
+                        <div class="placeholder-graph">[ Linear Transformation Graph ]</div>
+                    </div>
+                    <button class="btn-next" onclick="navigateTo('page-end')">Finish →</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-end" class="page">
+            <div class="end-layout">
+                <div class="final-strip" id="final-result"></div>
+                <div class="end-controls">
+                    <h1 class="irish-font">Thanks for visiting our EigenBooth</h1>
+                    <h2 class="irish-font">A Linear Transformation Experience</h2>
+                    <button class="btn-end red">Download</button>
+                    <button class="btn-end yellow">Send to mail</button>
+                    <button class="btn-end green" onclick="location.reload()">Retake</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
 </html>
