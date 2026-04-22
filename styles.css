@@ -48,15 +48,15 @@ body {
 
 .team-grid {
     display: flex;
-    gap: 30px;
-    margin-top: 40px;
+    gap: 5px;
+    margin-top: 5px;
 }
 
 .member img {
-    width: 100px;
-    height: 100px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    border: 3px solid var(--dark);
+    border: 1px solid var(--dark);
     display: block;
     margin-bottom: 10px;
 }
