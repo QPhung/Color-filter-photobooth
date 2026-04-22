@@ -5,7 +5,10 @@
     --green: #A2D9CE;
     --dark: #2C2C2C;
     --gray-banner: #E0E0E0;
+    --white: #FFFFFF;
 }
+
+* { box-sizing: border-box; }
 
 body, html { 
     margin: 0; padding: 0; 
@@ -15,69 +18,87 @@ body, html {
     width: 100%;
 }
 
-/* Navbar */
+/* NAVIGATION HIDING LOGIC */
+.page { 
+    display: none; /* Hide everything by default */
+    width: 100%; 
+    min-height: 100vh;
+}
+.page.active { 
+    display: flex; /* Show only the active page */
+    flex-direction: column;
+}
+
+/* NAVBAR */
 .navbar {
-    position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+    position: fixed; top: 0; left: 0; width: 100%; height: 70px;
     display: flex; justify-content: space-between; align-items: center;
-    padding: 0 40px; z-index: 100; background: transparent;
-}
-.nav-right span { margin-left: 20px; cursor: pointer; }
-
-/* Page & Section Setup */
-.page { display: none; width: 100%; }
-.page.active { display: block; }
-.full-screen-section {
-    position: relative; width: 100%; min-height: 100vh;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 0 40px; z-index: 1000; background: var(--bg-color);
+    border-bottom: 2px solid var(--dark);
 }
 
-/* Homepage Scroll Logic */
-.homepage-scroll { height: auto; overflow-y: auto; }
-
-/* Matrix Banner */
-.matrix-banner {
-    width: 100%; height: 100px;
-    background-color: var(--gray-banner);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.5rem; color: var(--dark);
-    text-align: center;
+/* BUTTON STYLING */
+.btn-action, .btn-main, .btn-next, .btn-end {
+    padding: 12px 28px;
+    border: 3px solid var(--dark);
+    border-radius: 0px; /* Sharp retro look */
+    font-family: 'Saira Stencil One', sans-serif;
+    cursor: pointer;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    transition: all 0.1s ease;
+    box-shadow: 4px 4px 0px var(--dark);
 }
 
-/* DECORATIONS - Fixed to actual edges */
-.deco { position: absolute; width: 120px; z-index: 0; pointer-events: none; }
-.edge-tl { top: 0; left: 0; }
-.edge-tr { top: 0; right: 0; }
-.edge-bl { bottom: 0; left: 0; }
-.edge-br { bottom: 0; right: 0; }
-.edge-mid-l { top: 50%; left: 0; transform: translateY(-50%); }
-.edge-mid-r { top: 50%; right: 0; transform: translateY(-50%); }
-.p-float-1 { top: 20%; left: 15%; }
-.p-float-2 { bottom: 25%; right: 15%; }
+.btn-action:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px var(--dark); }
 
-/* Buttons */
-.btn-action {
-    padding: 15px 30px; border-radius: 8px; border: none;
-    font-family: 'Saira Stencil One', sans-serif; cursor: pointer;
-    font-size: 1.1rem; display: inline-block;
-}
 .red-btn { background: var(--red); color: white; }
 .yellow-btn { background: var(--yellow); color: var(--dark); }
 .green-btn { background: var(--green); color: var(--dark); }
 
-/* Frame CSS */
-.photo-strip {
-    background: white; width: 180px; padding: 12px; border: 2px solid var(--dark);
-    display: flex; flex-direction: column; gap: 10px;
+/* LAYOUT CENTERING */
+.full-screen-section {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 20px; /* Space for navbar */
+    text-align: center;
 }
-.frame-yellow { background-color: var(--yellow); }
-.frame-green { background-color: var(--green); }
-.frame-red { background-color: var(--red); }
-.photo-slot { width: 100%; aspect-ratio: 1/1; background: #333; }
 
-/* Team Fixes */
-.member img {
-    width: 150px; height: 150px; border-radius: 50%;
-    border: 5px solid var(--dark); object-fit: cover;
-    margin-bottom: 10px;
+/* DECORATIONS */
+.deco { position: absolute; width: 120px; z-index: 0; pointer-events: none; }
+.edge-tl { top: 80px; left: 20px; }
+.edge-tr { top: 80px; right: 20px; }
+.edge-bl { bottom: 20px; left: 20px; }
+.edge-br { bottom: 20px; right: 20px; }
+
+/* CAMERA OVERLAY */
+.camera-container {
+    position: relative;
+    width: 640px; height: 480px;
+    background: #000;
+    border: 5px solid var(--dark);
 }
-.team-grid { display: flex; gap: 50px; margin-top: 30px; }
+#webcam { width: 100%; height: 100%; object-fit: cover; }
+#countdown-overlay {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 8rem; color: var(--red);
+    text-shadow: 4px 4px 0px var(--dark);
+    pointer-events: none;
+}
+
+/* PHOTO STRIP */
+.photo-strip {
+    background: var(--white);
+    padding: 15px;
+    border: 3px solid var(--dark);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 200px;
+}
+.photo-slot { width: 100%; aspect-ratio: 1; background: #eee; border: 1px solid #ccc; }
