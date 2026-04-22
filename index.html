@@ -9,60 +9,78 @@
 </head>
 <body>
 
-    <main id="app">
-        <section id="page-home" class="page active">
-            <img src="assets/pie_chart.png" class="deco p-tl">
-            <img src="assets/venn_diagram.png" class="deco p-bl">
-            <img src="assets/compass.png" class="deco p-tr">
-            <img src="assets/trophy.png" class="deco p-mid-l">
-            <img src="assets/square_ruler.png" class="deco p-mid-r">
-            <img src="assets/pencil.png" class="deco p-br">
-            <img src="assets/cat_drawn_1.png" class="deco p-float-1">
-            <img src="assets/cat_drawn_2.png" class="deco p-float-2">
+    <nav class="navbar stencil-font">
+        <div class="nav-left">Linear algebra</div>
+        <div class="nav-right">
+            <span>Hi.</span><span>Hey.</span><span>Hello.</span><span>Curious</span>
+        </div>
+    </nav>
 
-            <header class="hero">
-                <h1 class="irish-font">Welcome to EigenBooth</h1>
-                <h2 class="irish-font">A Linear Transformation Experience</h2>
-                <button class="btn-main" onclick="navigateTo('page-upload')">Start your amazing journey here</button>
-            </header>
-            
-            <div class="team-section">
-                <p class="irish-font">Let's meet our incredible team</p>
-                <div class="team-grid">
-                    <div class="member"><img src="assets/cat1.png"><span class="irish-font">Phuong Linh</span></div>
-                    <div class="member"><img src="assets/cat2.png"><span class="irish-font">Quy Phung</span></div>
-                    <div class="member"><img src="assets/cat3.png"><span class="irish-font">Quang Minh</span></div>
+    <main id="app">
+        <section id="page-home" class="page active homepage-scroll">
+            <div class="full-screen-section">
+                <img src="assets/pie_chart.png" class="deco edge-tl">
+                <img src="assets/compass.png" class="deco edge-tr">
+                <img src="assets/trophy.png" class="deco edge-mid-l">
+                <img src="assets/square_ruler.png" class="deco edge-mid-r">
+                <img src="assets/cat_drawn_1.png" class="deco p-float-1">
+                <img src="assets/cat_drawn_2.png" class="deco p-float-2">
+
+                <header class="hero">
+                    <h1 class="irish-font">Welcome to EigenBooth</h1>
+                    <h2 class="irish-font">A Linear Transformation Experience</h2>
+                    <button class="btn-main" onclick="navigateTo('page-upload')">Start your amazing journey here</button>
+                </header>
+            </div>
+
+            <div class="matrix-banner stencil-font">
+                Back to the matrix. Project your smile into a higher dimension.
+            </div>
+
+            <div class="full-screen-section team-bg">
+                <img src="assets/venn_diagram.png" class="deco edge-bl">
+                <img src="assets/pencil.png" class="deco edge-br">
+                <div class="team-section">
+                    <p class="irish-font">Let's meet our incredible team</p>
+                    <div class="team-grid">
+                        <div class="member"><img src="assets/cat1.png"><span class="irish-font">Phuong Linh</span></div>
+                        <div class="member"><img src="assets/cat2.png"><span class="irish-font">Quy Phung</span></div>
+                        <div class="member"><img src="assets/cat3.png"><span class="irish-font">Quang Minh</span></div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section id="page-upload" class="page">
-            <img src="assets/linh_guitar.png" class="deco p-bl">
-            <img src="assets/medal.png" class="deco p-tl">
-            <img src="assets/book.png" class="deco p-tr">
-            <img src="assets/pencil.png" class="deco p-br">
+        <section id="page-upload" class="page full-screen-section">
+            <img src="assets/medal.png" class="deco edge-tl">
+            <img src="assets/book.png" class="deco edge-tr">
+            <img src="assets/linh_guitar.png" class="deco edge-bl">
+            <img src="assets/pencil.png" class="deco edge-br">
 
             <div class="booth-card">
                 <h1 class="stencil-font">EigenBooth</h1>
                 <div class="btn-group">
-                    <button class="btn-action red" onclick="startBooth()">Start Photobooth</button>
-                    <label class="btn-action yellow">Upload Images<input type="file" hidden onchange="navigateTo('page-frames')"></label>
+                    <button class="btn-action red-btn" onclick="startBooth()">Start Photobooth</button>
+                    <label class="btn-action yellow-btn">
+                        Upload Images
+                        <input type="file" hidden onchange="handleUpload()">
+                    </label>
                 </div>
             </div>
         </section>
 
-        <section id="page-camera" class="page">
-            <img src="assets/venn_diagram.png" class="deco p-bl">
+        <section id="page-camera" class="page full-screen-section">
+            <img src="assets/venn_diagram.png" class="deco edge-bl">
             <div class="camera-container">
                 <video id="webcam" autoplay playsinline></video>
                 <div id="countdown-overlay" class="stencil-font"></div>
             </div>
-            <button id="start-timer-btn" class="btn-action red" onclick="beginSequence()">Start Countdown</button>
+            <button id="start-timer-btn" class="btn-action red-btn" onclick="beginSequence()">Start Countdown</button>
         </section>
 
-        <section id="page-frames" class="page">
-            <img src="assets/pie_chart.png" class="deco p-tr">
-            <img src="assets/cat_drawn_2.png" class="deco p-br">
+        <section id="page-frames" class="page full-screen-section">
+            <img src="assets/pie_chart.png" class="deco edge-tr">
+            <img src="assets/cat_drawn_2.png" class="deco edge-br">
 
             <div class="selection-layout">
                 <div id="main-photo-strip" class="photo-strip frame-yellow">
@@ -72,17 +90,17 @@
                 <div class="options-sidebar">
                     <h3 class="irish-font">Choose Frame you love:</h3>
                     <div class="icon-grid">
-                        <button class="icon-btn yellow" onclick="setFrame('yellow')">☕</button>
-                        <button class="icon-btn green" onclick="setFrame('green')">🍃</button>
-                        <button class="icon-btn red" onclick="setFrame('red')">☁️</button>
+                        <button class="icon-btn yellow-btn" onclick="setFrame('yellow')">☕</button>
+                        <button class="icon-btn green-btn" onclick="setFrame('green')">🍃</button>
+                        <button class="icon-btn red-btn" onclick="setFrame('red')">☁️</button>
                     </div>
                     <button class="btn-next" onclick="navigateTo('page-filters')">Next →</button>
                 </div>
             </div>
         </section>
 
-        <section id="page-filters" class="page">
-            <img src="assets/cat_drawn_2.png" class="deco p-br">
+        <section id="page-filters" class="page full-screen-section">
+            <img src="assets/cat_drawn_2.png" class="deco edge-br">
             <div class="selection-layout">
                 <div id="filter-preview-area"></div>
                 <div class="options-sidebar">
@@ -93,16 +111,16 @@
             </div>
         </section>
 
-        <section id="page-end" class="page">
-            <img src="assets/pie_chart.png" class="deco p-tl">
-            <img src="assets/venn_diagram.png" class="deco p-bl">
-            <img src="assets/compass.png" class="deco p-tr">
-            <img src="assets/pencil.png" class="deco p-br">
+        <section id="page-end" class="page full-screen-section">
+            <img src="assets/pie_chart.png" class="deco edge-tl">
+            <img src="assets/compass.png" class="deco edge-tr">
+            <img src="assets/venn_diagram.png" class="deco edge-bl">
+            <img src="assets/pencil.png" class="deco edge-br">
             <div class="end-layout">
                 <div id="final-result-container"></div>
                 <div class="end-controls">
                     <h1 class="irish-font">Thanks for visiting our EigenBooth</h1>
-                    <button class="btn-end green" onclick="location.reload()">Retake</button>
+                    <button class="btn-end green-btn" onclick="location.reload()">Retake</button>
                 </div>
             </div>
         </section>

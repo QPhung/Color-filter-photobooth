@@ -1,22 +1,68 @@
 :root {
-    --bg-color: #FDF6E3; --red: #FF6766; --yellow: #FFCC66; --green: #A2D9CE; --dark: #2C2C2C;
+    --bg-color: #FDF6E3;
+    --red: #FF6766;
+    --yellow: #FFCC66;
+    --green: #A2D9CE;
+    --dark: #2C2C2C;
+    --gray-banner: #E0E0E0;
 }
 
-body { background-color: var(--bg-color); font-family: 'Saira Stencil One', sans-serif; overflow: hidden; margin: 0; }
-.irish-font { font-family: 'Irish Grover', cursive; }
-
-/* FIX: Squish prevention */
-.member img {
-    width: 120px; height: 120px; border-radius: 50%;
-    border: 4px solid var(--dark); object-fit: cover; 
+body, html { 
+    margin: 0; padding: 0; 
+    background-color: var(--bg-color); 
+    font-family: 'Saira Stencil One', sans-serif;
+    color: var(--dark);
+    width: 100%;
 }
 
-/* Decorations */
-.deco { position: absolute; width: 100px; z-index: 0; pointer-events: none; }
-.p-tl { top: 2%; left: 2%; } .p-tr { top: 2%; right: 2%; }
-.p-bl { bottom: 2%; left: 2%; } .p-br { bottom: 2%; right: 2%; }
-.p-mid-l { top: 45%; left: 2%; } .p-mid-r { top: 45%; right: 2%; }
-.p-float-1 { top: 15%; left: 20%; } .p-float-2 { bottom: 20%; right: 20%; }
+/* Navbar */
+.navbar {
+    position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 40px; z-index: 100; background: transparent;
+}
+.nav-right span { margin-left: 20px; cursor: pointer; }
+
+/* Page & Section Setup */
+.page { display: none; width: 100%; }
+.page.active { display: block; }
+.full-screen-section {
+    position: relative; width: 100%; min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+
+/* Homepage Scroll Logic */
+.homepage-scroll { height: auto; overflow-y: auto; }
+
+/* Matrix Banner */
+.matrix-banner {
+    width: 100%; height: 100px;
+    background-color: var(--gray-banner);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; color: var(--dark);
+    text-align: center;
+}
+
+/* DECORATIONS - Fixed to actual edges */
+.deco { position: absolute; width: 120px; z-index: 0; pointer-events: none; }
+.edge-tl { top: 0; left: 0; }
+.edge-tr { top: 0; right: 0; }
+.edge-bl { bottom: 0; left: 0; }
+.edge-br { bottom: 0; right: 0; }
+.edge-mid-l { top: 50%; left: 0; transform: translateY(-50%); }
+.edge-mid-r { top: 50%; right: 0; transform: translateY(-50%); }
+.p-float-1 { top: 20%; left: 15%; }
+.p-float-2 { bottom: 25%; right: 15%; }
+
+/* Buttons */
+.btn-action {
+    padding: 15px 30px; border-radius: 8px; border: none;
+    font-family: 'Saira Stencil One', sans-serif; cursor: pointer;
+    font-size: 1.1rem; display: inline-block;
+}
+.red-btn { background: var(--red); color: white; }
+.yellow-btn { background: var(--yellow); color: var(--dark); }
+.green-btn { background: var(--green); color: var(--dark); }
 
 /* Frame CSS */
 .photo-strip {
@@ -27,10 +73,11 @@ body { background-color: var(--bg-color); font-family: 'Saira Stencil One', sans
 .frame-green { background-color: var(--green); }
 .frame-red { background-color: var(--red); }
 .photo-slot { width: 100%; aspect-ratio: 1/1; background: #333; }
-.strip-logo { width: 40px; }
 
-/* Layout */
-.page { display: none; position: relative; min-height: 100vh; flex-direction: column; align-items: center; justify-content: center; }
-.page.active { display: flex; }
-.selection-layout { display: flex; gap: 40px; z-index: 1; }
-.btn-main { padding: 15px 40px; border-radius: 50px; background: var(--dark); color: white; cursor: pointer; }
+/* Team Fixes */
+.member img {
+    width: 150px; height: 150px; border-radius: 50%;
+    border: 5px solid var(--dark); object-fit: cover;
+    margin-bottom: 10px;
+}
+.team-grid { display: flex; gap: 50px; margin-top: 30px; }
