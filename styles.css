@@ -10,167 +10,118 @@
 
 * { box-sizing: border-box; }
 
-body, html { 
-    margin: 0; padding: 0; 
-    background-color: var(--white); 
+body, html {
+    margin: 0; padding: 0;
+    background-color: var(--white);
     font-family: 'Saira Stencil One', sans-serif;
     color: var(--dark);
     width: 100%;
-    overflow: hidden;
 }
 
+/* ── HOME PAGE ─────────────────────────────────────── */
+body.home {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    font-size: 133%;
+}
+body.home .full-screen-section {
+    min-height: 100vh;
+}
+
+/* ── INNER PAGES ───────────────────────────────────── */
+body.inner {
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* ── IRISH FONT ────────────────────────────────────── */
 .irish-font {
     font-family: 'Irish Grover', cursive;
     -webkit-text-stroke: 0.1px #ec1818;
 }
 
-/* NAVIGATION HIDING LOGIC */
-.page { 
-    display: none; /* Hide everything by default */
-    width: 100%; 
-    height: 100vh;
-}
-.page.active { 
-    display: flex; /* Show only the active page */
-    flex-direction: column;
-}
-
-/* Allow scrolling on homepage */
-#page-home.active {
-    overflow-y: auto;
-    overflow-x: visible;
-}
-
-/* Sections within homepage fill screen so you can scroll through them */
-#page-home .full-screen-section {
-    min-height: 100vh;
-    overflow: visible;
-}
-
-/* Scale homepage content by 33% (1.33x) using font-size */
-#page-home {
-    font-size: 133%;
-}
-
-/* NAVBAR */
+/* ── NAVBAR (home only) ────────────────────────────── */
 .navbar {
     position: fixed; top: 0; left: 0; width: 100%; height: 70px;
     display: flex; justify-content: space-between; align-items: center;
     padding: 0 40px; z-index: 1000; background: var(--white);
     border-bottom: 2px solid var(--dark);
 }
-
-/* Hide navbar on non-homepage pages */
-main > .page:not(#page-home) ~ #homepage-navbar {
-    display: none;
-}
-
-/* Show navbar only when homepage is active */
-body:has(#page-home.active) #homepage-navbar {
-    display: flex;
-}
-
-body:not(:has(#page-home.active)) #homepage-navbar {
-    display: none;
-}
-
-.nav-right {
-    display: flex;
-    gap: 0;
-}
-
-.nav-cell {
-    padding: 10px 15px;
-}
-
+.nav-right { display: flex; gap: 0; }
+.nav-cell  { padding: 10px 15px; }
 .nav-button {
-    background: #000000;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
+    background: #000;
+    border-radius: 8px; border: none; cursor: pointer;
     font-family: 'Saira Stencil One', sans-serif;
-    font-size: 1rem;
-    color: var(--white);
-    padding: 10px 15px;
+    font-size: 1rem; color: var(--white); padding: 10px 15px;
 }
+.nav-button:hover { text-decoration: underline; }
 
-.nav-button:hover {
-    text-decoration: underline;
-}
-
-/* MATRIX BANNER */
+/* ── MATRIX BANNER ─────────────────────────────────── */
 .matrix-banner {
-    text-align: center;
-    font-size: 1.8rem;
+    text-align: center; font-size: 1.8rem;
     background-color: var(--gray-banner);
-    padding: 30px 20px;
-    width: 100%;
+    padding: 30px 20px; width: 100%;
 }
 
-/* BUTTON STYLING */
+/* ── BUTTONS ───────────────────────────────────────── */
 .btn-action, .btn-main, .btn-next, .btn-end {
     padding: 12px 28px;
-    border: 3px solid var(--dark);
-    border-radius: 8px;
+    border: 3px solid var(--dark); border-radius: 8px;
     font-family: 'Saira Stencil One', sans-serif;
-    cursor: pointer;
-    font-size: 1.2rem;
+    cursor: pointer; font-size: 1.2rem;
     text-transform: uppercase;
     transition: all 0.1s ease;
     box-shadow: 4px 4px 0px var(--dark);
 }
-
-.btn-action:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px var(--dark); }
+.btn-action:active { transform: translate(2px,2px); box-shadow: 2px 2px 0px var(--dark); }
 
 .btn-main {
-    background: #4D3535;
-    color: var(--white);
-    text-transform: none;
-    box-shadow: none;
-    border: none;
+    background: #4D3535; color: var(--white);
+    text-transform: none; box-shadow: none; border: none;
 }
+.btn-main:active { transform: translate(2px,2px); box-shadow: none; }
 
-.btn-main:active { transform: translate(2px, 2px); box-shadow: none; }
-
-.red-btn { background: var(--red); color: white; }
+.red-btn    { background: var(--red);    color: white; }
 .yellow-btn { background: var(--yellow); color: var(--dark); }
-.green-btn { background: var(--green); color: var(--dark); }
+.green-btn  { background: var(--green);  color: var(--dark); }
 
-/* LAYOUT CENTERING */
+/* ── LAYOUT ────────────────────────────────────────── */
 .full-screen-section {
     position: relative;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 100px 20px; /* Space for navbar */
-    text-align: center;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 100px 20px; text-align: center; width: 100%;
 }
 
-/* DECORATIONS */
+/* ── DECORATIONS ───────────────────────────────────── */
 .deco { position: absolute; width: 120px; z-index: 0; pointer-events: none; }
 
-/* Hero Section Decorations (above banner) - arranged horizontally right above banner */
-.deco-pie-chart { bottom: 0; left: 0; }
-.deco-trophy { bottom: 0; left: 120px; }
+.deco-pie-chart    { bottom: 0; left: 0; }
+.deco-trophy       { bottom: 0; left: 120px; }
 .deco-square-ruler { bottom: 0; right: 120px; }
 .deco-venn-diagram { bottom: 0; right: 0; }
+.deco-compass      { left: 0;  top: 50%; transform: translateY(-50%); z-index: 1; }
+.deco-pencil       { right: 0; top: 50%; transform: translateY(-50%); z-index: 1; }
+.deco-bl-corner    { bottom: 0; left: 0; }
+.deco-tr-corner    { top: 0;    right: 0; }
 
-/* Side edge elements */
-.deco-compass { left: 0; top: 50%; transform: translateY(-50%); z-index: 1; }
-.deco-pencil { right: 0; top: 50%; transform: translateY(-50%); z-index: 1; }
+.edge-tl { top: 0;    left: 0; }
+.edge-tr { top: 0;    right: 0; }
+.edge-bl { bottom: 0; left: 0; }
+.edge-br { bottom: 0; right: 0; }
 
-/* Team Section Decorations (below banner) */
-.deco-bl-corner { bottom: 0; left: 0; }
-.deco-tr-corner { top: 0; right: 0; }
-
-/* CAMERA OVERLAY */
+/* ── CAMERA ────────────────────────────────────────── */
 .camera-container {
     position: relative;
     width: 640px; height: 480px;
-    background: #000;
-    border: 5px solid var(--dark);
+    background: #000; border: 5px solid var(--dark);
 }
 #webcam { width: 100%; height: 100%; object-fit: cover; }
 #countdown-overlay {
@@ -181,36 +132,83 @@ body:not(:has(#page-home.active)) #homepage-navbar {
     pointer-events: none;
 }
 
-/* PHOTO STRIP */
+/* ── PHOTO STRIP ───────────────────────────────────── */
 .photo-strip {
-    background: var(--white);
-    padding: 15px;
+    background: var(--white); padding: 15px;
     border: 3px solid var(--dark);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 200px;
+    display: flex; flex-direction: column;
+    gap: 10px; width: 200px;
 }
-.photo-slot { width: 100%; aspect-ratio: 1; background: #eee; border: 1px solid #ccc; }
+.photo-slot {
+    width: 100%; aspect-ratio: 1;
+    background: #eee; border: 1px solid #ccc; overflow: hidden;
+}
+.photo-slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-/* TEAM GRID */
+/* ── TEAM GRID ─────────────────────────────────────── */
 .team-grid {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 40px;
-    flex-wrap: wrap;
+    display: flex; flex-direction: row;
+    justify-content: center; gap: 40px; flex-wrap: wrap;
+}
+.member { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.member img { width: 150px; height: 150px; object-fit: cover; }
+
+/* ── BOOTH CARD ────────────────────────────────────── */
+.booth-card {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 20px;
+    z-index: 10; position: relative;
+}
+.booth-title {
+    background-color: #4D3535; color: white;
+    padding: 15px 30px; border-radius: 8px; margin: 0;
+}
+.btn-group { display: flex; gap: 20px; }
+.linh-guitar { position: relative; width: 120px; margin-top: 20px; }
+.booth-subtitle {
+    font-family: 'Saira Stencil One', sans-serif;
+    color: black; font-size: 1rem; white-space: nowrap;
+}
+.guitar-text {
+    font-family: 'Saira Stencil One', sans-serif;
+    color: black; font-size: 0.9rem;
 }
 
-.member {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
+/* ── SELECTION LAYOUT (frames / filters) ───────────── */
+.selection-layout {
+    display: flex; flex-direction: row;
+    align-items: center; gap: 60px;
+    z-index: 10; position: relative;
+}
+.options-sidebar {
+    display: flex; flex-direction: column;
+    align-items: flex-start; gap: 20px;
+}
+.icon-grid { display: flex; gap: 12px; }
+.icon-btn {
+    width: 56px; height: 56px;
+    border: 3px solid var(--dark); border-radius: 8px;
+    font-size: 1.5rem; cursor: pointer;
+    box-shadow: 3px 3px 0px var(--dark);
+    transition: all 0.1s ease;
+    background: var(--white);
+}
+.icon-btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0px var(--dark); }
+
+/* ── END LAYOUT ────────────────────────────────────── */
+.end-layout {
+    display: flex; flex-direction: row;
+    align-items: center; gap: 60px;
+    z-index: 10; position: relative;
+}
+.end-controls {
+    display: flex; flex-direction: column;
+    align-items: flex-start; gap: 20px;
 }
 
-.member img {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
+/* ── GRAPH CONTAINER (filters page) ───────────────── */
+.graph-container {
+    background: #f5f5f5; border: 2px solid var(--dark);
+    border-radius: 8px; padding: 12px 20px;
+    font-size: 0.85rem; color: #666;
 }

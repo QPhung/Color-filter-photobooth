@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EigenBooth – Start</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Irish+Grover&family=Saira+Stencil+One&display=swap" rel="stylesheet">
+</head>
+<body class="inner">
+
+    <img src="assets/medal.png"  class="deco edge-tl">
+    <img src="assets/pencil.png" class="deco edge-tr">
+    <img src="assets/book.png"   class="deco edge-bl">
+    <img src="assets/graph.png"  class="deco edge-br">
+
+    <div class="booth-card">
+        <h1 class="stencil-font booth-title">EigenBooth</h1>
+        <div class="booth-subtitle">
+            Take photos and apply linear-algebra–powered color filters.
+        </div>
+        <div class="btn-group">
+            <button class="btn-action red-btn" onclick="location.href='camera.html'">
+                Start Photobooth
+            </button>
+            <label class="btn-action yellow-btn">
+                Upload Images
+                <input type="file" hidden multiple accept="image/*" onchange="handleUpload(this)">
+            </label>
+        </div>
+        <img src="assets/linh_guitar.png" class="linh-guitar">
+        <div class="guitar-text">Think you're done with Math? Think again.</div>
+    </div>
+
+    <script src="state.js"></script>
+    <script>
+        function handleUpload(input) {
+            if (!input.files || input.files.length !== 3) {
+                alert('Please upload exactly 3 images.');
+                return;
+            }
+            const photos = [];
+            let loaded = 0;
+            Array.from(input.files).forEach((file, i) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    photos[i] = e.target.result;
+                    if (++loaded === 3) {
+                        setPhotos(photos);
+                        location.href = 'frames.html';
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EigenBooth – Filters</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Irish+Grover&family=Saira+Stencil+One&display=swap" rel="stylesheet">
+    <style>
+        .frame-yellow { background: var(--yellow); border-color: var(--dark); }
+        .frame-green  { background: var(--green);  border-color: var(--dark); }
+        .frame-red    { background: var(--red);    border-color: var(--dark); }
+
+        .filter-none      .photo-slot img { filter: none; }
+        .filter-grayscale .photo-slot img { filter: grayscale(100%); }
+        .filter-sepia     .photo-slot img { filter: sepia(80%); }
+        .filter-warm      .photo-slot img { filter: saturate(150%) hue-rotate(-15deg); }
+        .filter-cool      .photo-slot img { filter: saturate(120%) hue-rotate(30deg) brightness(1.05); }
+        .filter-invert    .photo-slot img { filter: invert(80%); }
+
+        .graph-container {
+            background: #f5f5f5;
+            border: 2px solid var(--dark);
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .icon-btn.active {
+            outline: 3px solid var(--dark);
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px var(--dark);
+        }
+    </style>
+</head>
+<body class="inner">
+
+    <img src="assets/cat_drawn_2.png" class="deco edge-br">
+
+    <div class="selection-layout">
+        <div id="filter-strip" class="photo-strip frame-yellow filter-none">
+            <div class="photo-slot"></div>
+            <div class="photo-slot"></div>
+            <div class="photo-slot"></div>
+            <div class="strip-footer">
+                <img src="assets/cat_drawn_1.png" style="width:100%;">
+            </div>
+        </div>
+
+        <div class="options-sidebar">
+            <h3 class="irish-font">Choose Filter you love:</h3>
+            <div class="icon-grid" style="flex-wrap:wrap; max-width:180px;">
+                <button class="icon-btn active"     onclick="setFilter('none',      this)">🎨</button>
+                <button class="icon-btn"            onclick="setFilter('grayscale', this)">🌑</button>
+                <button class="icon-btn yellow-btn" onclick="setFilter('sepia',     this)">🟤</button>
+                <button class="icon-btn red-btn"    onclick="setFilter('warm',      this)">🔥</button>
+                <button class="icon-btn green-btn"  onclick="setFilter('cool',      this)">🧊</button>
+                <button class="icon-btn"            onclick="setFilter('invert',    this)">🔲</button>
+            </div>
+            <div class="graph-container">[ Transformation Graph ]</div>
+            <button class="btn-next yellow-btn" onclick="saveAndContinue()">Finish →</button>
+        </div>
+    </div>
+
+    <script src="state.js"></script>
+    <script>
+        let currentFilter = 'none';
+        const strip = document.getElementById('filter-strip');
+
+        // Restore frame
+        const savedFrame = sessionStorage.getItem('eigenbooth_frame') || 'yellow';
+        strip.classList.remove('frame-yellow');
+        strip.classList.add('frame-' + savedFrame);
+
+        renderPhotosToStrip('#filter-strip');
+
+        function setFilter(name, btn) {
+            strip.className = strip.className.replace(/filter-\S+/g, '').trim();
+            strip.classList.add('filter-' + name);
+            currentFilter = name;
+            document.querySelectorAll('.icon-grid .icon-btn')
+                .forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function saveAndContinue() {
+            sessionStorage.setItem('eigenbooth_filter', currentFilter);
+            location.href = 'end.html';
+        }
+    </script>
+</body>
+</html>
