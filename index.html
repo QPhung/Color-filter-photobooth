@@ -9,22 +9,25 @@
 </head>
 <body>
 
-    <nav class="navbar stencil-font">
+    <nav class="navbar stencil-font" id="homepage-navbar">
         <div class="nav-left">Linear algebra</div>
         <div class="nav-right">
-            <span>Hi.</span><span>Hey.</span><span>Hello.</span><span>Curious</span>
+            <div class="nav-cell">Hi</div>
+            <div class="nav-cell">Hey</div>
+            <div class="nav-cell">Hello</div>
+            <button class="nav-cell nav-button" onclick="document.querySelector('#page-home .team-bg').scrollIntoView({behavior: 'smooth'})">Curious</button>
         </div>
     </nav>
 
     <main id="app">
         <section id="page-home" class="page active homepage-scroll">
             <div class="full-screen-section">
-                <img src="assets/pie_chart.png" class="deco edge-tl">
-                <img src="assets/compass.png" class="deco edge-tr">
-                <img src="assets/trophy.png" class="deco edge-mid-l">
-                <img src="assets/square_ruler.png" class="deco edge-mid-r">
-                <img src="assets/cat_drawn_1.png" class="deco p-float-1">
-                <img src="assets/cat_drawn_2.png" class="deco p-float-2">
+                <img src="assets/pie_chart.png" class="deco deco-pie-chart">
+                <img src="assets/compass.png" class="deco deco-compass">
+                <img src="assets/trophy.png" class="deco deco-trophy">
+                <img src="assets/square_ruler.png" class="deco deco-square-ruler">
+                <img src="assets/pencil.png" class="deco deco-pencil">
+                <img src="assets/venn_diagram.png" class="deco deco-venn-diagram">
 
                 <header class="hero">
                     <h1 class="irish-font">Welcome to EigenBooth</h1>
@@ -38,8 +41,8 @@
             </div>
 
             <div class="full-screen-section team-bg">
-                <img src="assets/venn_diagram.png" class="deco edge-bl">
-                <img src="assets/pencil.png" class="deco edge-br">
+                <img src="assets/cat_drawn_1.png" class="deco deco-tr-corner">
+                <img src="assets/cat_drawn_2.png" class="deco deco-bl-corner">
                 <div class="team-section">
                     <p class="irish-font">Let's meet our incredible team</p>
                     <div class="team-grid">
