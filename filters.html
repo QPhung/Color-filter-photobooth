@@ -9,268 +9,173 @@
 <link href="https://fonts.googleapis.com/css2?family=Irish+Grover&family=Saira+Stencil+One&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 
 <style>
-/* FILTER PREVIEW */
-.filter-none .photo-slot img { filter:none; }
-.filter-grayscale .photo-slot img { filter:grayscale(100%); }
-.filter-sepia .photo-slot img { filter:sepia(80%); }
-.filter-warm .photo-slot img { filter:saturate(150%) hue-rotate(-15deg); }
-.filter-neon .photo-slot img { filter:saturate(220%) contrast(130%) hue-rotate(25deg); }
-.filter-cyberpunk .photo-slot img { filter:saturate(180%) contrast(120%) hue-rotate(65deg); }
+/* FILTER EFFECTS */
+.filter-none img { filter:none; }
+.filter-grayscale img { filter:grayscale(100%); }
+.filter-sepia img { filter:sepia(80%); }
+.filter-warm img { filter:saturate(150%) hue-rotate(-15deg); }
+.filter-neon img { filter:contrast(140%) saturate(180%); }
+.filter-cyberpunk img { filter:hue-rotate(260deg) saturate(180%); }
 
 /* FRAME COLORS */
-.frame-yellow { background:var(--yellow); }
-.frame-green { background:var(--green); }
-.frame-red { background:var(--red); }
+.frame-yellow { background: var(--yellow); }
+.frame-green { background: var(--green); }
+.frame-red { background: var(--red); }
 
+/* LAYOUT */
 body.inner {
-    display:block !important;
-    overflow:hidden;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
 }
 
-.filter-page-layout {
-    display:flex;
-    width:100%;
-    height:100vh;
+.left, .middle, .right {
+    padding: 20px;
 }
 
-/* LEFT PANEL */
-.filter-frame-panel {
-    padding:24px 20px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-
+/* STRIP */
 .photo-strip {
-    width:180px;
-    padding:12px;
-    border:3px solid var(--dark);
-    box-shadow:5px 5px 0 var(--dark);
-    display:flex;
-    flex-direction:column;
-    gap:8px;
+    width: 180px;
+    padding: 10px;
+    border: 3px solid var(--dark);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
-
 .photo-slot {
-    width:100%;
-    aspect-ratio:4/3;
-    background:#e0d8d0;
-    overflow:hidden;
+    aspect-ratio: 4/3;
+    background: #ddd;
+    overflow: hidden;
 }
-
 .photo-slot img {
     width:100%;
     height:100%;
     object-fit:cover;
 }
 
-.strip-logo {
-    width:100%;
-}
-
-/* CENTER PANEL */
-.filter-viz-panel {
-    flex:1;
-    padding:24px 16px;
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-}
-
-.viz-label {
-    font-family:'Irish Grover',cursive;
-    font-size:1.1rem;
-}
-
-.viz-wrap {
-    position:relative;
-    flex:1;
-    background:#0a0a0a;
-    border:3px solid var(--dark);
-    border-radius:16px;
-    overflow:hidden;
-    box-shadow:5px 5px 0 var(--dark);
-}
-
-#viz-canvas {
-    width:100%;
-    height:100%;
-    display:block;
-}
-
-.filter-button-row {
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:10px;
-}
-
+/* BUTTONS */
 .filter-btn {
-    min-height:78px;
-    border:3px solid var(--dark);
-    border-radius:12px;
-    font-family:'Saira Stencil One',sans-serif;
+    padding:10px;
+    margin:4px;
     cursor:pointer;
-    box-shadow:4px 4px 0 var(--dark);
-    font-size:.88rem;
 }
 
-.filter-btn.active {
-    outline:3px solid var(--dark);
-    outline-offset:2px;
-}
-
-/* Button Colors */
-.filter-btn[data-filter="none"] { background:#f8f8f8; }
-.filter-btn[data-filter="grayscale"] { background:linear-gradient(135deg,#ddd,#777); }
-.filter-btn[data-filter="sepia"] { background:linear-gradient(135deg,#f5e6c8,#c9a96e); }
-.filter-btn[data-filter="warm"] { background:linear-gradient(135deg,#ffe0c8,#e8855a); }
-
-.filter-btn[data-filter="neon"] {
-    background:linear-gradient(135deg,#ff9cff,#ff4df0,#a600ff);
-    color:white;
-}
-
-.filter-btn[data-filter="cyberpunk"] {
-    background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);
-    color:#00fff0;
-}
-
-.selected-hint {
-    font-family:'DM Mono',monospace;
-}
-
-/* RIGHT PANEL */
-.filter-matrix-panel {
-    width:280px;
-    padding:24px 20px;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    gap:20px;
-}
-
-.matrix-panel {
-    background:#f5f5f5;
-    border:2px solid var(--dark);
-    border-radius:10px;
-    padding:14px 16px;
-    box-shadow:3px 3px 0 var(--dark);
-}
-
-.matrix-wrap {
-    display:flex;
-    align-items:center;
-    gap:4px;
-}
-
-.matrix-bracket {
-    font-size:52px;
-    font-family:'DM Mono',monospace;
-}
-
-.matrix-rows {
-    flex:1;
-}
-
-.matrix-row {
-    display:flex;
-}
-
-.mc {
-    flex:1;
+/* MATRIX */
+.matrix span {
+    display:inline-block;
+    width:30px;
     text-align:center;
-    font-family:'DM Mono',monospace;
 }
-
 </style>
 </head>
 
 <body class="inner">
 
-<img src="assets/cat_drawn_2.png" class="deco edge-br">
-
-<div class="filter-page-layout">
-
-    <!-- LEFT -->
-    <div class="filter-frame-panel">
-        <div id="filter-strip" class="photo-strip frame-yellow filter-none">
-            <div class="photo-slot"></div>
-            <div class="photo-slot"></div>
-            <div class="photo-slot"></div>
-            <div class="strip-footer">
-                <img src="assets/cat_drawn_1.png" class="strip-logo">
-            </div>
-        </div>
+<!-- LEFT: STRIP -->
+<div class="left">
+    <div id="filter-strip" class="photo-strip frame-yellow filter-none">
+        <div class="photo-slot"></div>
+        <div class="photo-slot"></div>
+        <div class="photo-slot"></div>
     </div>
-
-    <!-- CENTER -->
-    <div class="filter-viz-panel">
-
-        <p class="viz-label">
-            pixel vector — <strong id="viz-filter-name">click a filter</strong>
-        </p>
-
-        <div class="viz-wrap">
-            <canvas id="viz-canvas"></canvas>
-        </div>
-
-        <div class="filter-button-row">
-            <button class="filter-btn active" onclick="setFilter('none',this)" data-filter="none">Original</button>
-            <button class="filter-btn" onclick="setFilter('grayscale',this)" data-filter="grayscale">Grayscale</button>
-            <button class="filter-btn" onclick="setFilter('sepia',this)" data-filter="sepia">Sepia</button>
-            <button class="filter-btn" onclick="setFilter('warm',this)" data-filter="warm">Warm</button>
-            <button class="filter-btn" onclick="setFilter('neon',this)" data-filter="neon">Neon Glow</button>
-            <button class="filter-btn" onclick="setFilter('cyberpunk',this)" data-filter="cyberpunk">Cyberpunk</button>
-        </div>
-
-        <div class="selected-hint">
-            selected: <strong id="selected-name">none</strong>
-        </div>
-
-    </div>
-
-    <!-- RIGHT -->
-    <div class="filter-matrix-panel">
-
-        <div class="matrix-panel">
-            <p>filter matrix <span id="matrix-filter-label">Original</span></p>
-
-            <div class="matrix-wrap">
-                <div class="matrix-bracket">[</div>
-
-                <div class="matrix-rows">
-                    <div class="matrix-row">
-                        <span class="mc" id="m00">1</span>
-                        <span class="mc" id="m01">0</span>
-                        <span class="mc" id="m02">0</span>
-                    </div>
-                    <div class="matrix-row">
-                        <span class="mc" id="m10">0</span>
-                        <span class="mc" id="m11">1</span>
-                        <span class="mc" id="m12">0</span>
-                    </div>
-                    <div class="matrix-row">
-                        <span class="mc" id="m20">0</span>
-                        <span class="mc" id="m21">0</span>
-                        <span class="mc" id="m22">1</span>
-                    </div>
-                </div>
-
-                <div class="matrix-bracket">]</div>
-            </div>
-        </div>
-
-        <button class="btn-next yellow-btn" onclick="saveAndContinue()">
-            Finish →
-        </button>
-
-    </div>
-
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<!-- MIDDLE: FILTERS -->
+<div class="middle">
+    <h2>Choose Filter</h2>
+
+    <button class="filter-btn" onclick="setFilter('none')">Original</button>
+    <button class="filter-btn" onclick="setFilter('grayscale')">Grayscale</button>
+    <button class="filter-btn" onclick="setFilter('sepia')">Sepia</button>
+    <button class="filter-btn" onclick="setFilter('warm')">Warm</button>
+    <button class="filter-btn" onclick="setFilter('neon')">Neon</button>
+    <button class="filter-btn" onclick="setFilter('cyberpunk')">Cyberpunk</button>
+
+    <br><br>
+    <button onclick="saveAndContinue()">Finish →</button>
+</div>
+
+<!-- RIGHT: MATRIX -->
+<div class="right">
+    <h3>Filter Matrix</h3>
+    <div class="matrix" id="matrix">
+        <div><span id="m00">1</span><span id="m01">0</span><span id="m02">0</span></div>
+        <div><span id="m10">0</span><span id="m11">1</span><span id="m12">0</span></div>
+        <div><span id="m20">0</span><span id="m21">0</span><span id="m22">1</span></div>
+    </div>
+</div>
+
 <script src="state.js"></script>
-<script src="filters.js"></script>
+
+<script>
+// ─────────────────────────────
+// FILTER DATA
+// ─────────────────────────────
+const FILTERS = {
+    none: [[1,0,0],[0,1,0],[0,0,1]],
+    grayscale: [[0.299,0.587,0.114],[0.299,0.587,0.114],[0.299,0.587,0.114]],
+    sepia: [[0.393,0.769,0.189],[0.349,0.686,0.168],[0.272,0.534,0.131]],
+    warm: [[1.15,0,0],[0,1.05,0],[0,0,0.8]],
+    neon: [[1.5,-0.2,-0.2],[-0.2,1.5,-0.2],[-0.2,-0.2,1.5]],
+    cyberpunk: [[1.2,0,0.4],[0,0.7,0.2],[0.3,0.1,1.3]]
+};
+
+let currentFilter = "none";
+
+
+// ─────────────────────────────
+// INIT
+// ─────────────────────────────
+window.onload = () => {
+    renderPhotosToStrip('#filter-strip');
+
+    const frame = sessionStorage.getItem('eigenbooth_frame') || 'yellow';
+    const strip = document.getElementById('filter-strip');
+
+    strip.classList.add('frame-' + frame);
+};
+
+
+// ─────────────────────────────
+// APPLY FILTER
+// ─────────────────────────────
+function setFilter(name) {
+    currentFilter = name;
+
+    const strip = document.getElementById('filter-strip');
+
+    // remove old filter classes
+    strip.className = strip.className.replace(/filter-\S+/g, '');
+
+    // add new filter
+    strip.classList.add('filter-' + name);
+
+    updateMatrix(name);
+}
+
+
+// ─────────────────────────────
+// UPDATE MATRIX DISPLAY
+// ─────────────────────────────
+function updateMatrix(name) {
+    const m = FILTERS[name];
+
+    for (let r=0;r<3;r++){
+        for (let c=0;c<3;c++){
+            document.getElementById(`m${r}${c}`).textContent = m[r][c];
+        }
+    }
+}
+
+
+// ─────────────────────────────
+// SAVE + GO NEXT
+// ─────────────────────────────
+function saveAndContinue() {
+    sessionStorage.setItem('eigenbooth_filter', currentFilter);
+    window.location.href = "end.html";
+}
+</script>
 
 </body>
 </html>
