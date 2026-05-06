@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EigenBooth – Camera</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Irish+Grover&family=Saira+Stencil+One&display=swap" rel="stylesheet">
+    <style>
+        body.camera {
+            background: #000;
+            color: #fff;
+            gap: 16px;
+        }
+
+        .thumbnail-row {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .thumb {
+            width: 100px;
+            height: 100px;
+            background: #1a1a1a;
+            border: 3px solid #444;
+            border-radius: 6px;
+            overflow: hidden;
+            cursor: default;
+            position: relative;
+            transition: border-color 0.15s, transform 0.1s, opacity 0.15s;
+            flex-shrink: 0;
+        }
+        .thumb img {
+            width: 100%; height: 100%;
+            object-fit: cover; display: block;
+        }
+        .thumb .slot-label {
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; color: #555;
+        }
+
+        .thumb.captured { cursor: pointer; }
+        .thumb.captured:hover { border-color: #aaa; }
+
+        .thumb.selected {
+            border-color: var(--yellow);
+            box-shadow: 0 0 0 2px var(--yellow);
+            transform: translateY(-5px);
+        }
+        .thumb.selected::after {
+            content: '✓';
+            position: absolute; top: 4px; right: 5px;
+            font-size: 0.85rem; font-weight: bold;
+            color: var(--dark); background: var(--yellow);
+            border-radius: 50%;
+            width: 20px; height: 20px;
+            display: flex; align-items: center; justify-content: center;
+            line-height: 20px; text-align: center;
+        }
+        .thumb.dimmed { opacity: 0.35; }
+
+        .camera-status {
+            display: flex; flex-direction: column;
+            align-items: center; gap: 4px;
+        }
+        .shot-counter { font-size: 1rem; color: #ccc; }
+        .select-hint  { font-size: 0.85rem; color: #888; min-height: 1.2em; }
+
+        #shutter-btn:disabled {
+            opacity: 0.4; cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 4px 4px 0px var(--dark) !important;
+        }
+    </style>
+</head>
+<body class="inner camera">
+
+    <img src="assets/venn_diagram.png" class="deco edge-bl" style="opacity:0.25;">
+
+    <div class="camera-container">
+        <video id="webcam" autoplay playsinline></video>
+        <div id="countdown-overlay" class="stencil-font"></div>
+    </div>
+
+    <div class="camera-status">
+        <div id="shot-counter" class="shot-counter stencil-font">Photo 1 of 5</div>
+        <div id="select-hint" class="select-hint"></div>
+    </div>
+
+    <div class="thumbnail-row">
+        <div class="thumb" id="thumb-0"><span class="slot-label">1</span></div>
+        <div class="thumb" id="thumb-1"><span class="slot-label">2</span></div>
+        <div class="thumb" id="thumb-2"><span class="slot-label">3</span></div>
+        <div class="thumb" id="thumb-3"><span class="slot-label">4</span></div>
+        <div class="thumb" id="thumb-4"><span class="slot-label">5</span></div>
+    </div>
+
+    <button id="shutter-btn" class="btn-action red-btn" onclick="handleBtn()">
+        Start Countdown
+    </button>
+
+    <script src="state.js"></script>
+    <script>
+        const TOTAL_SHOTS  = 5;
+        const CHOOSE_COUNT = 3;
+
+        let allPhotos  = [];
+        let shotsTaken = 0;
+        let selected   = [];
+        let phase      = 'shooting';
+
+        // Boot camera
+        (async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                document.getElementById('webcam').srcObject = stream;
+            } catch (err) {
+                alert('Could not access camera. Please allow permissions and try again.');
+            }
+        })();
+
+        function handleBtn() {
+            if (phase === 'shooting') {
+                beginCountdown();
+            } else {
+                setPhotos(selected.map(i => allPhotos[i]));
+                location.href = 'frames.html';
+            }
+        }
+
+        function beginCountdown() {
+            let count = 3;
+            const overlay = document.getElementById('countdown-overlay');
+            const btn     = document.getElementById('shutter-btn');
+            btn.disabled  = true;
+
+            const timer = setInterval(() => {
+                overlay.innerText = count > 0 ? count : 'CHEESE!';
+                if (count === 0) {
+                    clearInterval(timer);
+                    captureFrame();
+                    setTimeout(() => {
+                        overlay.innerText = '';
+                        shotsTaken >= TOTAL_SHOTS ? enterSelectingPhase() : updateShootingUI();
+                    }, 900);
+                }
+                count--;
+            }, 1000);
+        }
+
+        function captureFrame() {
+            const video  = document.getElementById('webcam');
+            const canvas = document.createElement('canvas');
+            canvas.width  = video.videoWidth  || 640;
+            canvas.height = video.videoHeight || 480;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            const dataURL = canvas.toDataURL('image/png');
+            const idx = allPhotos.length;
+            allPhotos.push(dataURL);
+            shotsTaken++;
+
+            const slot = document.getElementById(`thumb-${idx}`);
+            slot.innerHTML = '';
+            const img = document.createElement('img');
+            img.src = dataURL;
+            slot.appendChild(img);
+            slot.classList.add('captured');
+            slot.onclick = () => toggleSelect(idx);
+        }
+
+        function updateShootingUI() {
+            document.getElementById('shot-counter').textContent =
+                `Photo ${shotsTaken + 1} of ${TOTAL_SHOTS}`;
+            const btn = document.getElementById('shutter-btn');
+            btn.textContent = `Take Photo ${shotsTaken + 1}`;
+            btn.disabled = false;
+        }
+
+        function enterSelectingPhase() {
+            phase = 'selecting';
+            const video = document.getElementById('webcam');
+            if (video.srcObject) {
+                video.srcObject.getTracks().forEach(t => t.stop());
+                video.srcObject = null;
+            }
+            document.getElementById('shot-counter').textContent = 'All 5 taken!';
+            document.getElementById('select-hint').textContent =
+                `Choose ${CHOOSE_COUNT} photos to keep`;
+
+            const btn = document.getElementById('shutter-btn');
+            btn.textContent = 'Choose Filter';
+            btn.classList.replace('red-btn', 'green-btn');
+            btn.disabled = true;
+        }
+
+        function toggleSelect(idx) {
+            if (phase !== 'selecting') return;
+            if (selected.includes(idx)) {
+                selected = selected.filter(i => i !== idx);
+            } else {
+                if (selected.length >= CHOOSE_COUNT) return;
+                selected.push(idx);
+            }
+            refreshThumbnailStates();
+        }
+
+        function refreshThumbnailStates() {
+            const full = selected.length >= CHOOSE_COUNT;
+            for (let i = 0; i < TOTAL_SHOTS; i++) {
+                const el = document.getElementById(`thumb-${i}`);
+                if (!el.classList.contains('captured')) continue;
+                const isSel = selected.includes(i);
+                el.classList.toggle('selected', isSel);
+                el.classList.toggle('dimmed', full && !isSel);
+            }
+            document.getElementById('shutter-btn').disabled = selected.length < CHOOSE_COUNT;
+            document.getElementById('select-hint').textContent =
+                selected.length < CHOOSE_COUNT
+                    ? `Choose ${CHOOSE_COUNT - selected.length} more`
+                    : 'Ready! Press Choose Filter ↓';
+        }
+    </script>
+</body>
+</html>

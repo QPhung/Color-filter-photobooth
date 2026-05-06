@@ -1,13 +1,72 @@
-<html>
-  <head>
-    <title>Color filter photobooth</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EigenBooth</title>
     <link rel="stylesheet" href="styles.css">
-  </head>
-  <body>
-    <p>
-      hello world
-    </p>
-    <script src="index.js"></script>
-  </body>
+    <link href="https://fonts.googleapis.com/css2?family=Irish+Grover&family=Saira+Stencil+One&display=swap" rel="stylesheet">
+</head>
+<body class="home">
+
+    <nav class="navbar">
+        <div class="nav-left">Linear algebra</div>
+        <div class="nav-right">
+            <div class="nav-cell">Hi</div>
+            <div class="nav-cell">Hey</div>
+            <div class="nav-cell">Hello</div>
+            <button class="nav-cell nav-button"
+                onclick="document.querySelector('.team-bg').scrollIntoView({behavior:'smooth'})">
+                Curious
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <div class="full-screen-section">
+        <img src="assets/pie_chart.png"    class="deco deco-pie-chart">
+        <img src="assets/compass.png"      class="deco deco-compass">
+        <img src="assets/trophy.png"       class="deco deco-trophy">
+        <img src="assets/square_ruler.png" class="deco deco-square-ruler">
+        <img src="assets/pencil.png"       class="deco deco-pencil">
+        <img src="assets/venn_diagram.png" class="deco deco-venn-diagram">
+
+        <header class="hero">
+            <h1 class="irish-font">Welcome to EigenBooth</h1>
+            <h2 class="irish-font">A Linear Transformation Experience</h2>
+            <button class="btn-main" onclick="location.href='upload.html'">
+                Start your amazing journey here
+            </button>
+        </header>
+    </div>
+
+    <!-- Banner -->
+    <div class="matrix-banner stencil-font">
+        Back to the matrix. Project your smile into a higher dimension.
+    </div>
+
+    <!-- Team -->
+    <div class="full-screen-section team-bg">
+        <img src="assets/cat_drawn_1.png" class="deco deco-tr-corner">
+        <img src="assets/cat_drawn_2.png" class="deco deco-bl-corner">
+        <div class="team-section">
+            <p class="irish-font">Let's meet our incredible team</p>
+            <div class="team-grid">
+                <div class="member">
+                    <img src="assets/cat1.png">
+                    <span class="irish-font">Phuong Linh</span>
+                </div>
+                <div class="member">
+                    <img src="assets/cat2.png">
+                    <span class="irish-font">Quy Phung</span>
+                </div>
+                <div class="member">
+                    <img src="assets/cat3.png">
+                    <span class="irish-font">Quang Minh</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
 </html>

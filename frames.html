@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EigenBooth – Frames</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Irish+Grover&family=Saira+Stencil+One&display=swap" rel="stylesheet">
+    <style>
+        .frame-yellow { background: var(--yellow); border-color: var(--dark); }
+        .frame-green  { background: var(--green);  border-color: var(--dark); }
+        .frame-red    { background: var(--red);    border-color: var(--dark); }
+    </style>
+</head>
+<body class="inner">
+
+    <img src="assets/pie_chart.png"   class="deco edge-tr">
+    <img src="assets/cat_drawn_2.png" class="deco edge-br">
+
+    <div class="selection-layout">
+        <div id="main-photo-strip" class="photo-strip frame-yellow">
+            <div class="photo-slot"></div>
+            <div class="photo-slot"></div>
+            <div class="photo-slot"></div>
+            <div class="strip-footer">
+                <img src="assets/cat_drawn_1.png" style="width:100%;">
+            </div>
+        </div>
+
+        <div class="options-sidebar">
+            <h3 class="irish-font">Choose Frame you love:</h3>
+            <div class="icon-grid">
+                <button class="icon-btn yellow-btn" onclick="setFrame('yellow')">☕</button>
+                <button class="icon-btn green-btn"  onclick="setFrame('green')">🍃</button>
+                <button class="icon-btn red-btn"    onclick="setFrame('red')">☁️</button>
+            </div>
+            <button class="btn-next yellow-btn" onclick="location.href='filters.html'">
+                Next →
+            </button>
+        </div>
+    </div>
+
+    <script src="state.js"></script>
+    <script>
+        renderPhotosToStrip('#main-photo-strip');
+
+        function setFrame(color) {
+            document.getElementById('main-photo-strip').className = 'photo-strip frame-' + color;
+            sessionStorage.setItem('eigenbooth_frame', color);
+        }
+    </script>
+</body>
+</html>

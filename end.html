@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EigenBooth – Done!</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Irish+Grover&family=Saira+Stencil+One&display=swap" rel="stylesheet">
+    <style>
+        .frame-yellow { background: var(--yellow); border-color: var(--dark); }
+        .frame-green  { background: var(--green);  border-color: var(--dark); }
+        .frame-red    { background: var(--red);    border-color: var(--dark); }
+
+        .filter-none      .photo-slot img { filter: none; }
+        .filter-grayscale .photo-slot img { filter: grayscale(100%); }
+        .filter-sepia     .photo-slot img { filter: sepia(80%); }
+        .filter-warm      .photo-slot img { filter: saturate(150%) hue-rotate(-15deg); }
+        .filter-cool      .photo-slot img { filter: saturate(120%) hue-rotate(30deg) brightness(1.05); }
+        .filter-invert    .photo-slot img { filter: invert(80%); }
+    </style>
+</head>
+<body class="inner">
+
+    <img src="assets/pie_chart.png"    class="deco edge-tl">
+    <img src="assets/compass.png"      class="deco edge-tr">
+    <img src="assets/venn_diagram.png" class="deco edge-bl">
+    <img src="assets/pencil.png"       class="deco edge-br">
+
+    <div class="end-layout">
+        <div id="final-strip" class="photo-strip frame-yellow filter-none">
+            <div class="photo-slot"></div>
+            <div class="photo-slot"></div>
+            <div class="photo-slot"></div>
+            <div class="strip-footer">
+                <img src="assets/cat_drawn_1.png" style="width:100%;">
+            </div>
+        </div>
+
+        <div class="end-controls">
+            <h1 class="irish-font">Thanks for visiting our EigenBooth</h1>
+            <button class="btn-end green-btn" onclick="retake()">Retake</button>
+        </div>
+    </div>
+
+    <script src="state.js"></script>
+    <script>
+        const strip  = document.getElementById('final-strip');
+        const frame  = sessionStorage.getItem('eigenbooth_frame')  || 'yellow';
+        const filter = sessionStorage.getItem('eigenbooth_filter') || 'none';
+
+        strip.classList.remove('frame-yellow');
+        strip.classList.add('frame-' + frame, 'filter-' + filter);
+
+        renderPhotosToStrip('#final-strip');
+
+        function retake() {
+            clearPhotos();
+            sessionStorage.removeItem('eigenbooth_frame');
+            sessionStorage.removeItem('eigenbooth_filter');
+            location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
