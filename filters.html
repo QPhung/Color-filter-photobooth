@@ -5,12 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EigenBooth – Filters</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Irish+Grover&family=Saira+Stencil+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Irish+Grover&family=Saira+Stencil+One&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
     <style>
-        .frame-yellow { background: var(--yellow); border-color: var(--dark); }
-        .frame-green  { background: var(--green);  border-color: var(--dark); }
-        .frame-red    { background: var(--red);    border-color: var(--dark); }
-
+        /* ── CSS filter classes on strip images ── */
         .filter-none      .photo-slot img { filter: none; }
         .filter-grayscale .photo-slot img { filter: grayscale(100%); }
         .filter-sepia     .photo-slot img { filter: sepia(80%); }
@@ -18,19 +15,289 @@
         .filter-cool      .photo-slot img { filter: saturate(120%) hue-rotate(30deg) brightness(1.05); }
         .filter-invert    .photo-slot img { filter: invert(80%); }
 
-        .graph-container {
-            background: #f5f5f5;
-            border: 2px solid var(--dark);
-            border-radius: 8px;
-            padding: 12px 20px;
-            font-size: 0.85rem;
-            color: #666;
+        /* ── frame color variants ── */
+        .frame-yellow { background: var(--yellow); }
+        .frame-green  { background: var(--green);  }
+        .frame-red    { background: var(--red);    }
+
+        body.inner {
+    display: block !important;
+    overflow: hidden;
+}
+
+        /* ══ THREE-COLUMN PAGE LAYOUT ══ */
+        .filter-page-layout {
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            width: 100%;
+            height: 100vh;
+            padding: 0;
+            gap: 0;
         }
 
-        .icon-btn.active {
-            outline: 3px solid var(--dark);
-            transform: translate(2px, 2px);
-            box-shadow: 1px 1px 0px var(--dark);
+        /* ── LEFT: strip ── */
+        .filter-frame-panel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            padding: 24px 20px;
+        }
+
+        .photo-strip {
+            width: 180px;
+            padding: 12px;
+            border: 3px solid var(--dark);
+            box-shadow: 5px 5px 0 var(--dark);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .photo-slot {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            background: #e0d8d0;
+            overflow: hidden;
+        }
+        .photo-slot img {
+            width: 100%; height: 100%;
+            object-fit: cover; display: block;
+        }
+
+        .strip-footer {
+            width: 100%;
+            padding-top: 6px;
+        }
+        .strip-logo { width: 100%; display: block; }
+
+        /* ── MIDDLE: viz + filter buttons + hint ── */
+        .filter-viz-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: center;
+            padding: 24px 16px;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .viz-label {
+            font-family: 'Irish Grover', cursive;
+            font-size: 1.1rem;
+            margin: 0;
+            color: var(--dark);
+        }
+
+        .viz-wrap {
+            position: relative;
+            width: 100%;
+            flex: 1;
+            min-height: 0;
+            background: #0a0a0a;
+            border: 3px solid var(--dark);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 5px 5px 0 var(--dark);
+        }
+
+        #viz-canvas { width: 100%; height: 100%; display: block; }
+
+        .viz-overlay {
+            position: absolute;
+            top: 10px; left: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            pointer-events: none;
+        }
+
+        .pixel-chip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            font-family: 'DM Mono', monospace;
+            color: rgba(255,255,255,0.85);
+        }
+
+        .pixel-swatch {
+            width: 14px; height: 14px;
+            border-radius: 2px;
+            border: 1px solid rgba(255,255,255,0.3);
+            flex-shrink: 0;
+        }
+
+        .viz-idle {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Irish Grover', cursive;
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.22);
+            pointer-events: none;
+            text-align: center;
+            padding: 16px;
+        }
+
+        /* Filter buttons row (below viz) */
+        .filter-button-row {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0,1fr));
+            gap: 10px;
+        }
+
+        .filter-btn {
+            width: 100%;
+            min-height: 78px;
+            border: 3px solid var(--dark);
+            border-radius: 12px;
+            background: var(--white);
+            color: var(--dark);
+            font-family: 'Saira Stencil One', sans-serif;
+            font-size: 0.88rem;
+            letter-spacing: 0.03em;
+            cursor: pointer;
+            box-shadow: 4px 4px 0 var(--dark);
+            transition: transform 0.1s, box-shadow 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 6px;
+        }
+        .filter-btn span { display: block; line-height: 1.2; }
+        .filter-btn:hover  { transform: translate(-1px,-1px); box-shadow: 5px 5px 0 var(--dark); }
+        .filter-btn:active { transform: translate(2px,2px);   box-shadow: 1px 1px 0 var(--dark); }
+        .filter-btn.active { outline: 3px solid var(--dark);  outline-offset: 2px; }
+
+        /* Filter button tints */
+        .filter-btn[data-filter="grayscale"] {
+            background: linear-gradient(135deg,#ddd 0%,#777 100%); color:#111;
+        }
+        .filter-btn[data-filter="sepia"] {
+            background: linear-gradient(135deg,#f5e6c8 0%,#c9a96e 100%); color:#5a3a10;
+        }
+        .filter-btn[data-filter="warm"] {
+            background: linear-gradient(135deg,#ffe0c8 0%,#ffb87a 50%,#e8855a 100%);
+            color:#7a3a18; border-color:#c0602a; box-shadow:4px 4px 0 #c0602a;
+        }
+        .filter-btn[data-filter="warm"]:hover { box-shadow:5px 5px 0 #c0602a; }
+        .filter-btn[data-filter="cool"] {
+            background: linear-gradient(135deg,#c8e0ff 0%,#7ab8ff 50%,#5a85e8 100%);
+            color:#183a7a; border-color:#4060bb; box-shadow:4px 4px 0 #4060bb;
+        }
+        .filter-btn[data-filter="cool"]:hover { box-shadow:5px 5px 0 #4060bb; }
+        .filter-btn[data-filter="invert"] {
+            background: linear-gradient(135deg,#111 0%,#555 50%,#eee 100%);
+            color:#fff; text-shadow:0 1px 3px rgba(0,0,0,0.7);
+        }
+
+        .selected-hint {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.88rem;
+            color: #555;
+            letter-spacing: 0.04em;
+        }
+        .selected-hint strong {
+            color: var(--dark);
+            font-family: 'Saira Stencil One', sans-serif;
+        }
+
+        /* ── RIGHT: matrix + finish ── */
+        .filter-matrix-panel {
+            flex-shrink: 0;
+            width: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 24px 20px 24px 8px;
+            gap: 20px;
+        }
+
+        .matrix-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: #f5f5f5;
+            border: 2px solid var(--dark);
+            border-radius: 10px;
+            padding: 14px 16px;
+            box-shadow: 3px 3px 0 var(--dark);
+        }
+
+        .matrix-title {
+            font-size: 10px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #999;
+            font-family: 'DM Mono', monospace;
+            margin: 0;
+        }
+        .matrix-title span {
+            color: var(--dark);
+            font-family: 'Saira Stencil One', sans-serif;
+            font-size: 11px;
+            text-transform: none;
+            letter-spacing: 0.04em;
+        }
+
+        .matrix-wrap {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .matrix-bracket {
+            font-size: 52px;
+            font-weight: 100;
+            color: var(--dark);
+            line-height: 1;
+            font-family: 'DM Mono', monospace;
+            user-select: none;
+        }
+
+        .matrix-rows {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex: 1;
+        }
+
+        .matrix-row {
+            display: flex;
+            gap: 0;
+        }
+
+        .mc {
+            display: inline-block;
+            flex: 1;
+            text-align: center;
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+            padding: 3px 0;
+            border-radius: 4px;
+            transition: background 0.3s, transform 0.25s;
+        }
+        .matrix-row:nth-child(1) .mc { color: #cc3333; }
+        .matrix-row:nth-child(2) .mc { color: #228822; }
+        .matrix-row:nth-child(3) .mc { color: #2255cc; }
+        .mc.changed {
+            background: rgba(255,103,102,0.2);
+            transform: scale(1.1);
+        }
+
+        .matrix-legend {
+            display: flex;
+            gap: 6px;
+            font-size: 9px;
+            font-family: 'DM Mono', monospace;
+            align-items: center;
+            flex-wrap: wrap;
         }
     </style>
 </head>
@@ -38,56 +305,359 @@
 
     <img src="assets/cat_drawn_2.png" class="deco edge-br">
 
-    <div class="selection-layout">
-        <div id="filter-strip" class="photo-strip frame-yellow filter-none">
-            <div class="photo-slot"></div>
-            <div class="photo-slot"></div>
-            <div class="photo-slot"></div>
-            <div class="strip-footer">
-                <img src="assets/cat_drawn_1.png" style="width:100%;">
+    <div class="filter-page-layout">
+
+        <!-- ══ LEFT: photo strip ══ -->
+        <div class="filter-frame-panel">
+            <div id="filter-strip" class="photo-strip frame-yellow filter-none">
+                <div class="photo-slot"></div>
+                <div class="photo-slot"></div>
+                <div class="photo-slot"></div>
+                <div class="strip-footer">
+                    <img src="assets/cat_drawn_1.png" class="strip-logo">
+                </div>
             </div>
         </div>
 
-        <div class="options-sidebar">
-            <h3 class="irish-font">Choose Filter you love:</h3>
-            <div class="icon-grid" style="flex-wrap:wrap; max-width:180px;">
-                <button class="icon-btn active"     onclick="setFilter('none',      this)">🎨</button>
-                <button class="icon-btn"            onclick="setFilter('grayscale', this)">🌑</button>
-                <button class="icon-btn yellow-btn" onclick="setFilter('sepia',     this)">🟤</button>
-                <button class="icon-btn red-btn"    onclick="setFilter('warm',      this)">🔥</button>
-                <button class="icon-btn green-btn"  onclick="setFilter('cool',      this)">🧊</button>
-                <button class="icon-btn"            onclick="setFilter('invert',    this)">🔲</button>
+        <!-- ══ MIDDLE: Three.js viz + filter buttons + hint ══ -->
+        <div class="filter-viz-panel">
+            <p class="viz-label">pixel vector — <strong id="viz-filter-name">click a filter</strong></p>
+            <div class="viz-wrap">
+                <canvas id="viz-canvas"></canvas>
+                <div class="viz-overlay">
+                    <div class="pixel-chip" id="chip-in" style="display:none">
+                        <div class="pixel-swatch" id="swatch-in"></div>
+                        <span id="label-in"></span>
+                    </div>
+                    <div class="pixel-chip" id="chip-out" style="display:none">
+                        <div class="pixel-swatch" id="swatch-out"></div>
+                        <span id="label-out"></span>
+                    </div>
+                </div>
+                <div class="viz-idle" id="viz-idle">click a filter to visualize</div>
             </div>
-            <div class="graph-container">[ Transformation Graph ]</div>
+
+            <div class="filter-button-row">
+                <button class="filter-btn active" data-filter="none"      onclick="setFilter('none',this)"><span>Original</span></button>
+                <button class="filter-btn"        data-filter="grayscale" onclick="setFilter('grayscale',this)"><span>Grayscale</span></button>
+                <button class="filter-btn"        data-filter="sepia"     onclick="setFilter('sepia',this)"><span>Sepia</span></button>
+                <button class="filter-btn"        data-filter="warm"      onclick="setFilter('warm',this)"><span>Warm</span></button>
+                <button class="filter-btn"        data-filter="cool"      onclick="setFilter('cool',this)"><span>Cool</span></button>
+                <button class="filter-btn"        data-filter="invert"    onclick="setFilter('invert',this)"><span>Invert</span></button>
+            </div>
+
+            <div class="selected-hint">selected: <strong id="selected-name">none</strong></div>
+        </div>
+
+        <!-- ══ RIGHT: matrix + finish ══ -->
+        <div class="filter-matrix-panel">
+            <div class="matrix-panel">
+                <p class="matrix-title">filter matrix <span id="matrix-filter-label"></span></p>
+                <div class="matrix-wrap">
+                    <div class="matrix-bracket left">[</div>
+                    <div class="matrix-rows" id="matrix-rows">
+                        <div class="matrix-row">
+                            <span class="mc" id="m00">1</span>
+                            <span class="mc" id="m01">0</span>
+                            <span class="mc" id="m02">0</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="mc" id="m10">0</span>
+                            <span class="mc" id="m11">1</span>
+                            <span class="mc" id="m12">0</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="mc" id="m20">0</span>
+                            <span class="mc" id="m21">0</span>
+                            <span class="mc" id="m22">1</span>
+                        </div>
+                    </div>
+                    <div class="matrix-bracket right">]</div>
+                </div>
+                <div class="matrix-legend">
+                    <span style="color:#ff6666">R'</span>
+                    <span style="color:#66dd66">G'</span>
+                    <span style="color:#6699ff">B'</span>
+                    <span style="color:#aaa">← output channels</span>
+                </div>
+            </div>
+
             <button class="btn-next yellow-btn" onclick="saveAndContinue()">Finish →</button>
         </div>
+
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="state.js"></script>
     <script>
-        let currentFilter = 'none';
-        const strip = document.getElementById('filter-strip');
+        console.log("FILTER SCRIPT VERSION 2");
+    // ═══════════════════════════════════════════
+    //  FILTER DEFINITIONS
+    // ═══════════════════════════════════════════
+    const FILTER_MATRICES = {
+    none: [
+        [1,0,0],
+        [0,1,0],
+        [0,0,1]
+    ],
 
-        // Restore frame
-        const savedFrame = sessionStorage.getItem('eigenbooth_frame') || 'yellow';
-        strip.classList.remove('frame-yellow');
-        strip.classList.add('frame-' + savedFrame);
+    grayscale: [
+        [0.299,0.587,0.114],
+        [0.299,0.587,0.114],
+        [0.299,0.587,0.114]
+    ],
 
-        renderPhotosToStrip('#filter-strip');
+    sepia: [
+        [0.393,0.769,0.189],
+        [0.349,0.686,0.168],
+        [0.272,0.534,0.131]
+    ],
 
-        function setFilter(name, btn) {
-            strip.className = strip.className.replace(/filter-\S+/g, '').trim();
-            strip.classList.add('filter-' + name);
-            currentFilter = name;
-            document.querySelectorAll('.icon-grid .icon-btn')
-                .forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+    warm: [
+        [1.15,0,0],
+        [0,1.05,0],
+        [0,0,0.80]
+    ],
+
+    neon: [
+        [1.5,-0.2,-0.2],
+        [-0.2,1.5,-0.2],
+        [-0.2,-0.2,1.5]
+    ],
+
+    cyberpunk: [
+        [1.2,0,0.4],
+        [0,0.7,0.2],
+        [0.3,0.1,1.3]
+    ]
+};
+const FILTER_LABELS = {
+    none: 'Original',
+    grayscale: 'Grayscale',
+    sepia: 'Sepia',
+    warm: 'Warm',
+    neon: 'Neon Glow',
+    cyberpunk: 'Cyberpunk'
+};
+    const IDENTITY = [[1,0,0],[0,1,0],[0,0,1]];
+    const IDS = [['m00','m01','m02'],['m10','m11','m12'],['m20','m21','m22']];
+
+    // ═══════════════════════════════════════════
+    //  INIT STRIP
+    // ═══════════════════════════════════════════
+    let currentFilter = 'none';
+    const strip = document.getElementById('filter-strip');
+    const savedFrame = sessionStorage.getItem('eigenbooth_frame') || 'yellow';
+    strip.classList.remove('frame-yellow','frame-green','frame-red');
+    strip.classList.add('frame-' + savedFrame);
+    renderPhotosToStrip('#filter-strip');
+
+    // ═══════════════════════════════════════════
+    //  FILTER SWITCHING
+    // ═══════════════════════════════════════════
+    function setFilter(name, btn) {
+        currentFilter = name;
+        document.querySelectorAll('.filter-button-row .filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        strip.className = strip.className.replace(/filter-\S+/g,'').trim();
+        strip.classList.add('filter-' + name);
+
+        document.getElementById('selected-name').textContent   = name;
+        document.getElementById('viz-filter-name').textContent = name;
+
+        const photos = getPhotos();
+        if (photos[0]) sampleAndVisualize(photos[0], name);
+        else            visualize(name, 140, 100, 80, FILTER_MATRICES[name]);
+
+        updateMatrix(name, FILTER_MATRICES[name]);
+    }
+
+    function saveAndContinue() {
+        sessionStorage.setItem('eigenbooth_filter', currentFilter);
+        location.href = 'end.html';
+    }
+
+    // ═══════════════════════════════════════════
+    //  SAMPLE CENTER PIXEL FROM PHOTO
+    // ═══════════════════════════════════════════
+    function sampleAndVisualize(src, filterId) {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = function () {
+            const c = document.createElement('canvas');
+            c.width = img.naturalWidth || 320;
+            c.height = img.naturalHeight || 240;
+            const ctx = c.getContext('2d');
+            ctx.drawImage(img, 0, 0, c.width, c.height);
+            const cx = Math.floor(c.width/2), cy = Math.floor(c.height/2);
+            const px = ctx.getImageData(Math.max(0,cx-4), Math.max(0,cy-4), 9, 9).data;
+            let r=0,g=0,b=0;
+            for (let j=0;j<px.length;j+=4){ r+=px[j]; g+=px[j+1]; b+=px[j+2]; }
+            const n=81;
+            visualize(filterId, Math.round(r/n), Math.round(g/n), Math.round(b/n), FILTER_MATRICES[filterId]);
+        };
+        img.onerror = () => visualize(filterId, 140, 100, 80, FILTER_MATRICES[filterId]);
+        img.src = src;
+    }
+
+    // ═══════════════════════════════════════════
+    //  THREE.JS RGB CUBE
+    // ═══════════════════════════════════════════
+    let renderer, scene, camera;
+    let inArrow=null, ghostArrow=null;
+    let animating=false, animT=0, animData=null;
+
+    function initThreeJS() {
+        const wrap   = document.querySelector('.viz-wrap');
+        const canvas = document.getElementById('viz-canvas');
+        const W = wrap.clientWidth  || 480;
+        const H = wrap.clientHeight || 300;
+
+        renderer = new THREE.WebGLRenderer({ canvas, antialias:true });
+        renderer.setSize(W, H);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setClearColor(0x0a0a0a, 1);
+
+        scene  = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(55, W/H, 0.1, 2000);
+
+        let isDragging=false, prevX=0, prevY=0;
+        let theta=-2.4, phi=1.1, radius=560;
+
+        function updateCam() {
+            camera.position.set(
+                127.5 + radius*Math.sin(phi)*Math.sin(theta),
+                127.5 + radius*Math.cos(phi),
+                127.5 + radius*Math.sin(phi)*Math.cos(theta)
+            );
+            camera.lookAt(127.5, 127.5, 127.5);
         }
+        updateCam();
 
-        function saveAndContinue() {
-            sessionStorage.setItem('eigenbooth_filter', currentFilter);
-            location.href = 'end.html';
-        }
+        canvas.addEventListener('mousedown', e=>{ isDragging=true; prevX=e.clientX; prevY=e.clientY; });
+        canvas.addEventListener('mousemove', e=>{
+            if(!isDragging) return;
+            theta -= (e.clientX-prevX)*0.01;
+            phi    = Math.max(0.1, Math.min(Math.PI-0.1, phi-(e.clientY-prevY)*0.01));
+            prevX=e.clientX; prevY=e.clientY;
+            updateCam();
+        });
+        canvas.addEventListener('mouseup',    ()=>isDragging=false);
+        canvas.addEventListener('mouseleave', ()=>isDragging=false);
+
+        // Wireframe cube
+        const cube = new THREE.LineSegments(
+            new THREE.EdgesGeometry(new THREE.BoxGeometry(255,255,255)),
+            new THREE.LineBasicMaterial({color:0x333333})
+        );
+        cube.position.set(127.5,127.5,127.5);
+        scene.add(cube);
+
+        // Axes R G B
+        [[new THREE.Vector3(1,0,0),0xff4444],
+         [new THREE.Vector3(0,1,0),0x44cc44],
+         [new THREE.Vector3(0,0,1),0x4488ff]].forEach(([d,c])=>{
+            scene.add(new THREE.Line(
+                new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), d.clone().multiplyScalar(290)]),
+                new THREE.LineBasicMaterial({color:c})
+            ));
+        });
+
+        // Axis labels
+        [['R',308,0,0,'#ff6666'],['G',0,308,0,'#66dd66'],['B',0,0,308,'#6699ff']].forEach(([t,x,y,z,col])=>{
+            const c2=document.createElement('canvas'); c2.width=64; c2.height=32;
+            const cx=c2.getContext('2d'); cx.fillStyle=col; cx.font='bold 22px monospace';
+            cx.textAlign='center'; cx.textBaseline='middle'; cx.fillText(t,32,16);
+            const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c2),transparent:true}));
+            sp.position.set(x,y,z); sp.scale.set(24,12,1);
+            scene.add(sp);
+        });
+
+        // Render loop
+        (function loop(){
+            requestAnimationFrame(loop);
+            if (animating && animData) {
+                animT = Math.min(animT+0.018, 1);
+                const e2 = animT<0.5 ? 2*animT*animT : -1+(4-2*animT)*animT;
+                const cR = animData.rIn+(animData.rOut-animData.rIn)*e2;
+                const cG = animData.gIn+(animData.gOut-animData.gIn)*e2;
+                const cB = animData.bIn+(animData.bOut-animData.bIn)*e2;
+                const col = new THREE.Color(animData.colorIn).lerp(new THREE.Color(animData.colorOut),e2);
+                if (inArrow) {
+                    const v=new THREE.Vector3(cR,cG,cB), len=v.length();
+                    inArrow.setDirection(v.normalize());
+                    inArrow.setLength(Math.max(1,len),len*0.08,len*0.05);
+                    inArrow.setColor(col);
+                }
+                if (animT>=1) animating=false;
+            }
+            renderer.render(scene,camera);
+        })();
+    }
+
+    function applyMat(mat,r,g,b) {
+        return mat.map(row=>Math.min(255,Math.max(0,Math.round(row[0]*r+row[1]*g+row[2]*b))));
+    }
+
+    function visualize(filterId,r,g,b,matrix) {
+        document.getElementById('viz-idle').style.display='none';
+        document.getElementById('viz-filter-name').textContent=filterId;
+        const [rO,gO,bO]=applyMat(matrix,r,g,b);
+        const hex=(r,g,b)=>`#${[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('')}`;
+        const hIn=hex(r,g,b), hOut=hex(rO,gO,bO);
+
+        document.getElementById('swatch-in').style.background=hIn;
+        document.getElementById('label-in').textContent=`in  rgb(${r},${g},${b})`;
+        document.getElementById('chip-in').style.display='flex';
+        document.getElementById('swatch-out').style.background=hOut;
+        document.getElementById('label-out').textContent=`out rgb(${rO},${gO},${bO})`;
+        document.getElementById('chip-out').style.display='flex';
+
+        if (inArrow)    { scene.remove(inArrow);    inArrow=null; }
+        if (ghostArrow) { scene.remove(ghostArrow); ghostArrow=null; }
+
+        const v=new THREE.Vector3(r,g,b), len=v.length();
+        const col=new THREE.Color(r/255,g/255,b/255);
+
+        ghostArrow=new THREE.ArrowHelper(v.clone().normalize(),new THREE.Vector3(),Math.max(1,len),col.getHex(),len*0.08,len*0.05);
+        ghostArrow.line.material.opacity=0.22; ghostArrow.line.material.transparent=true;
+        ghostArrow.cone.material.opacity=0.22; ghostArrow.cone.material.transparent=true;
+        scene.add(ghostArrow);
+
+        inArrow=new THREE.ArrowHelper(v.clone().normalize(),new THREE.Vector3(),Math.max(1,len),col.getHex(),len*0.08,len*0.05);
+        scene.add(inArrow);
+
+        animT=0; animating=true;
+        animData={rIn:r,gIn:g,bIn:b,rOut:rO,gOut:gO,bOut:bO,colorIn:hIn,colorOut:hOut};
+    }
+
+    // ═══════════════════════════════════════════
+    //  ANIMATED MATRIX
+    // ═══════════════════════════════════════════
+    function fmt(v){ return parseFloat(v.toFixed(3)).toString(); }
+
+    function updateMatrix(filterId,matrix) {
+        document.getElementById('matrix-filter-label').textContent = FILTER_LABELS[filterId]||filterId;
+        matrix.forEach((row,r)=>row.forEach((val,c)=>{
+            const cell=document.getElementById(IDS[r][c]);
+            const changed=Math.abs(val-IDENTITY[r][c])>0.001;
+            cell.style.transition='none'; cell.style.transform='scale(1.2)';
+            cell.style.background=changed?'rgba(255,103,102,0.3)':'';
+            setTimeout(()=>{
+                cell.textContent=fmt(val);
+                cell.style.transition='background 0.4s, transform 0.3s';
+                cell.style.transform=changed?'scale(1.08)':'scale(1)';
+                cell.style.background=changed?'rgba(255,103,102,0.18)':'';
+                cell.classList.toggle('changed',changed);
+            }, 60+r*40+c*20);
+        }));
+    }
+
+    // ═══════════════════════════════════════════
+    //  BOOT
+    // ═══════════════════════════════════════════
+    window.addEventListener('load', ()=>requestAnimationFrame(()=>initThreeJS()));
     </script>
 </body>
 </html>

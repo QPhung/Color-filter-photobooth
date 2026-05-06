@@ -44,6 +44,75 @@
 
     <script src="state.js"></script>
     <script>
+        function downloadStrip() {
+    const photos = getPhotos();
+    if (!photos || photos.length < 3) return;
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    const width = 600;
+    const slotHeight = 450;
+    const padding = 30;
+    const footerHeight = 140;
+
+    canvas.width = width;
+    canvas.height = padding + 3 * (slotHeight + padding) + footerHeight;
+
+    // Frame color
+    const frameColors = {
+        yellow: '#FFD95A',
+        green:  '#A7D676',
+        red:    '#FF6766'
+    };
+
+    const frame = sessionStorage.getItem('eigenbooth_frame') || 'yellow';
+    ctx.fillStyle = frameColors[frame] || frameColors.yellow;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const filter = sessionStorage.getItem('eigenbooth_filter') || 'none';
+
+    let loaded = 0;
+    const imgs = [];
+
+    photos.forEach((src, i) => {
+        const img = new Image();
+        img.onload = () => {
+            imgs[i] = img;
+            loaded++;
+            if (loaded === photos.length) drawStrip();
+        };
+        img.src = src;
+    });
+
+    function applyCanvasFilter() {
+        const filters = {
+            none: 'none',
+            grayscale: 'grayscale(100%)',
+            sepia: 'sepia(80%)',
+            warm: 'saturate(150%) hue-rotate(-15deg)',
+            cool: 'saturate(120%) hue-rotate(30deg) brightness(1.05)',
+            invert: 'invert(80%)'
+        };
+        ctx.filter = filters[filter] || 'none';
+    }
+
+    function drawStrip() {
+        imgs.forEach((img, i) => {
+            const y = padding + i * (slotHeight + padding);
+
+            applyCanvasFilter();
+            ctx.drawImage(img, padding, y, width - 2 * padding, slotHeight);
+        });
+
+        ctx.filter = 'none';
+
+        const link = document.createElement('a');
+        link.download = 'eigenbooth-strip.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    }
+}
         const strip  = document.getElementById('final-strip');
         const frame  = sessionStorage.getItem('eigenbooth_frame')  || 'yellow';
         const filter = sessionStorage.getItem('eigenbooth_filter') || 'none';

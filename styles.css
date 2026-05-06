@@ -212,3 +212,13 @@ body.inner {
     border-radius: 8px; padding: 12px 20px;
     font-size: 0.85rem; color: #666;
 }
+body.inner.camera {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.camera-container {
+    flex: 1;
+}
