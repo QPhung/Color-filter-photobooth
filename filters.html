@@ -1,93 +1,276 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EigenBooth – Filters</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Irish+Grover&family=Saira+Stencil+One&display=swap" rel="stylesheet">
-    <style>
-        .frame-yellow { background: var(--yellow); border-color: var(--dark); }
-        .frame-green  { background: var(--green);  border-color: var(--dark); }
-        .frame-red    { background: var(--red);    border-color: var(--dark); }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EigenBooth – Filters</title>
 
-        .filter-none      .photo-slot img { filter: none; }
-        .filter-grayscale .photo-slot img { filter: grayscale(100%); }
-        .filter-sepia     .photo-slot img { filter: sepia(80%); }
-        .filter-warm      .photo-slot img { filter: saturate(150%) hue-rotate(-15deg); }
-        .filter-cool      .photo-slot img { filter: saturate(120%) hue-rotate(30deg) brightness(1.05); }
-        .filter-invert    .photo-slot img { filter: invert(80%); }
+<link rel="stylesheet" href="styles.css">
+<link href="https://fonts.googleapis.com/css2?family=Irish+Grover&family=Saira+Stencil+One&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 
-        .graph-container {
-            background: #f5f5f5;
-            border: 2px solid var(--dark);
-            border-radius: 8px;
-            padding: 12px 20px;
-            font-size: 0.85rem;
-            color: #666;
-        }
+<style>
+/* FILTER PREVIEW */
+.filter-none .photo-slot img { filter:none; }
+.filter-grayscale .photo-slot img { filter:grayscale(100%); }
+.filter-sepia .photo-slot img { filter:sepia(80%); }
+.filter-warm .photo-slot img { filter:saturate(150%) hue-rotate(-15deg); }
+.filter-neon .photo-slot img { filter:saturate(220%) contrast(130%) hue-rotate(25deg); }
+.filter-cyberpunk .photo-slot img { filter:saturate(180%) contrast(120%) hue-rotate(65deg); }
 
-        .icon-btn.active {
-            outline: 3px solid var(--dark);
-            transform: translate(2px, 2px);
-            box-shadow: 1px 1px 0px var(--dark);
-        }
-    </style>
+/* FRAME COLORS */
+.frame-yellow { background:var(--yellow); }
+.frame-green { background:var(--green); }
+.frame-red { background:var(--red); }
+
+body.inner {
+    display:block !important;
+    overflow:hidden;
+}
+
+.filter-page-layout {
+    display:flex;
+    width:100%;
+    height:100vh;
+}
+
+/* LEFT PANEL */
+.filter-frame-panel {
+    padding:24px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.photo-strip {
+    width:180px;
+    padding:12px;
+    border:3px solid var(--dark);
+    box-shadow:5px 5px 0 var(--dark);
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.photo-slot {
+    width:100%;
+    aspect-ratio:4/3;
+    background:#e0d8d0;
+    overflow:hidden;
+}
+
+.photo-slot img {
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.strip-logo {
+    width:100%;
+}
+
+/* CENTER PANEL */
+.filter-viz-panel {
+    flex:1;
+    padding:24px 16px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.viz-label {
+    font-family:'Irish Grover',cursive;
+    font-size:1.1rem;
+}
+
+.viz-wrap {
+    position:relative;
+    flex:1;
+    background:#0a0a0a;
+    border:3px solid var(--dark);
+    border-radius:16px;
+    overflow:hidden;
+    box-shadow:5px 5px 0 var(--dark);
+}
+
+#viz-canvas {
+    width:100%;
+    height:100%;
+    display:block;
+}
+
+.filter-button-row {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+}
+
+.filter-btn {
+    min-height:78px;
+    border:3px solid var(--dark);
+    border-radius:12px;
+    font-family:'Saira Stencil One',sans-serif;
+    cursor:pointer;
+    box-shadow:4px 4px 0 var(--dark);
+    font-size:.88rem;
+}
+
+.filter-btn.active {
+    outline:3px solid var(--dark);
+    outline-offset:2px;
+}
+
+/* Button Colors */
+.filter-btn[data-filter="none"] { background:#f8f8f8; }
+.filter-btn[data-filter="grayscale"] { background:linear-gradient(135deg,#ddd,#777); }
+.filter-btn[data-filter="sepia"] { background:linear-gradient(135deg,#f5e6c8,#c9a96e); }
+.filter-btn[data-filter="warm"] { background:linear-gradient(135deg,#ffe0c8,#e8855a); }
+
+.filter-btn[data-filter="neon"] {
+    background:linear-gradient(135deg,#ff9cff,#ff4df0,#a600ff);
+    color:white;
+}
+
+.filter-btn[data-filter="cyberpunk"] {
+    background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);
+    color:#00fff0;
+}
+
+.selected-hint {
+    font-family:'DM Mono',monospace;
+}
+
+/* RIGHT PANEL */
+.filter-matrix-panel {
+    width:280px;
+    padding:24px 20px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:20px;
+}
+
+.matrix-panel {
+    background:#f5f5f5;
+    border:2px solid var(--dark);
+    border-radius:10px;
+    padding:14px 16px;
+    box-shadow:3px 3px 0 var(--dark);
+}
+
+.matrix-wrap {
+    display:flex;
+    align-items:center;
+    gap:4px;
+}
+
+.matrix-bracket {
+    font-size:52px;
+    font-family:'DM Mono',monospace;
+}
+
+.matrix-rows {
+    flex:1;
+}
+
+.matrix-row {
+    display:flex;
+}
+
+.mc {
+    flex:1;
+    text-align:center;
+    font-family:'DM Mono',monospace;
+}
+
+</style>
 </head>
+
 <body class="inner">
 
-    <img src="assets/cat_drawn_2.png" class="deco edge-br">
+<img src="assets/cat_drawn_2.png" class="deco edge-br">
 
-    <div class="selection-layout">
+<div class="filter-page-layout">
+
+    <!-- LEFT -->
+    <div class="filter-frame-panel">
         <div id="filter-strip" class="photo-strip frame-yellow filter-none">
             <div class="photo-slot"></div>
             <div class="photo-slot"></div>
             <div class="photo-slot"></div>
             <div class="strip-footer">
-                <img src="assets/cat_drawn_1.png" style="width:100%;">
+                <img src="assets/cat_drawn_1.png" class="strip-logo">
             </div>
-        </div>
-
-        <div class="options-sidebar">
-            <h3 class="irish-font">Choose Filter you love:</h3>
-            <div class="icon-grid" style="flex-wrap:wrap; max-width:180px;">
-                <button class="icon-btn active"     onclick="setFilter('none',      this)">🎨</button>
-                <button class="icon-btn"            onclick="setFilter('grayscale', this)">🌑</button>
-                <button class="icon-btn yellow-btn" onclick="setFilter('sepia',     this)">🟤</button>
-                <button class="icon-btn red-btn"    onclick="setFilter('warm',      this)">🔥</button>
-                <button class="icon-btn green-btn"  onclick="setFilter('cool',      this)">🧊</button>
-                <button class="icon-btn"            onclick="setFilter('invert',    this)">🔲</button>
-            </div>
-            <div class="graph-container">[ Transformation Graph ]</div>
-            <button class="btn-next yellow-btn" onclick="saveAndContinue()">Finish →</button>
         </div>
     </div>
 
-    <script src="state.js"></script>
-    <script>
-        let currentFilter = 'none';
-        const strip = document.getElementById('filter-strip');
+    <!-- CENTER -->
+    <div class="filter-viz-panel">
 
-        // Restore frame
-        const savedFrame = sessionStorage.getItem('eigenbooth_frame') || 'yellow';
-        strip.classList.remove('frame-yellow');
-        strip.classList.add('frame-' + savedFrame);
+        <p class="viz-label">
+            pixel vector — <strong id="viz-filter-name">click a filter</strong>
+        </p>
 
-        renderPhotosToStrip('#filter-strip');
+        <div class="viz-wrap">
+            <canvas id="viz-canvas"></canvas>
+        </div>
 
-        function setFilter(name, btn) {
-            strip.className = strip.className.replace(/filter-\S+/g, '').trim();
-            strip.classList.add('filter-' + name);
-            currentFilter = name;
-            document.querySelectorAll('.icon-grid .icon-btn')
-                .forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        }
+        <div class="filter-button-row">
+            <button class="filter-btn active" onclick="setFilter('none',this)" data-filter="none">Original</button>
+            <button class="filter-btn" onclick="setFilter('grayscale',this)" data-filter="grayscale">Grayscale</button>
+            <button class="filter-btn" onclick="setFilter('sepia',this)" data-filter="sepia">Sepia</button>
+            <button class="filter-btn" onclick="setFilter('warm',this)" data-filter="warm">Warm</button>
+            <button class="filter-btn" onclick="setFilter('neon',this)" data-filter="neon">Neon Glow</button>
+            <button class="filter-btn" onclick="setFilter('cyberpunk',this)" data-filter="cyberpunk">Cyberpunk</button>
+        </div>
 
-        function saveAndContinue() {
-            sessionStorage.setItem('eigenbooth_filter', currentFilter);
-            location.href = 'end.html';
-        }
-    </script>
+        <div class="selected-hint">
+            selected: <strong id="selected-name">none</strong>
+        </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="filter-matrix-panel">
+
+        <div class="matrix-panel">
+            <p>filter matrix <span id="matrix-filter-label">Original</span></p>
+
+            <div class="matrix-wrap">
+                <div class="matrix-bracket">[</div>
+
+                <div class="matrix-rows">
+                    <div class="matrix-row">
+                        <span class="mc" id="m00">1</span>
+                        <span class="mc" id="m01">0</span>
+                        <span class="mc" id="m02">0</span>
+                    </div>
+                    <div class="matrix-row">
+                        <span class="mc" id="m10">0</span>
+                        <span class="mc" id="m11">1</span>
+                        <span class="mc" id="m12">0</span>
+                    </div>
+                    <div class="matrix-row">
+                        <span class="mc" id="m20">0</span>
+                        <span class="mc" id="m21">0</span>
+                        <span class="mc" id="m22">1</span>
+                    </div>
+                </div>
+
+                <div class="matrix-bracket">]</div>
+            </div>
+        </div>
+
+        <button class="btn-next yellow-btn" onclick="saveAndContinue()">
+            Finish →
+        </button>
+
+    </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="state.js"></script>
+<script src="filters.js"></script>
+
 </body>
 </html>

@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EigenBooth – Done!</title>
+
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Irish+Grover&family=Saira+Stencil+One&display=swap" rel="stylesheet">
+
     <style>
         .frame-yellow { background: var(--yellow); border-color: var(--dark); }
         .frame-green  { background: var(--green);  border-color: var(--dark); }
@@ -17,20 +19,29 @@
         .filter-warm      .photo-slot img { filter: saturate(150%) hue-rotate(-15deg); }
         .filter-cool      .photo-slot img { filter: saturate(120%) hue-rotate(30deg) brightness(1.05); }
         .filter-invert    .photo-slot img { filter: invert(80%); }
+
+        .end-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
     </style>
 </head>
+
 <body class="inner">
 
-    <img src="assets/pie_chart.png"    class="deco edge-tl">
-    <img src="assets/compass.png"      class="deco edge-tr">
+    <img src="assets/pie_chart.png" class="deco edge-tl">
+    <img src="assets/compass.png" class="deco edge-tr">
     <img src="assets/venn_diagram.png" class="deco edge-bl">
-    <img src="assets/pencil.png"       class="deco edge-br">
+    <img src="assets/pencil.png" class="deco edge-br">
 
     <div class="end-layout">
+
         <div id="final-strip" class="photo-strip frame-yellow filter-none">
             <div class="photo-slot"></div>
             <div class="photo-slot"></div>
             <div class="photo-slot"></div>
+
             <div class="strip-footer">
                 <img src="assets/cat_drawn_1.png" style="width:100%;">
             </div>
@@ -38,27 +49,186 @@
 
         <div class="end-controls">
             <h1 class="irish-font">Thanks for visiting our EigenBooth</h1>
-            <button class="btn-end green-btn" onclick="retake()">Retake</button>
+
+            <button class="btn-end blue-btn" onclick="downloadStrip()">
+                Download
+            </button>
+
+            <button class="btn-end green-btn" onclick="retake()">
+                Retake
+            </button>
         </div>
+
     </div>
 
     <script src="state.js"></script>
+
     <script>
-        const strip  = document.getElementById('final-strip');
-        const frame  = sessionStorage.getItem('eigenbooth_frame')  || 'yellow';
+        // =========================
+        // INITIALIZE DISPLAY STRIP
+        // =========================
+        const strip = document.getElementById('final-strip');
+        const frame = sessionStorage.getItem('eigenbooth_frame') || 'yellow';
         const filter = sessionStorage.getItem('eigenbooth_filter') || 'none';
 
-        strip.classList.remove('frame-yellow');
+        strip.classList.remove('frame-yellow', 'frame-green', 'frame-red');
         strip.classList.add('frame-' + frame, 'filter-' + filter);
 
         renderPhotosToStrip('#final-strip');
 
+
+        // =========================
+        // RETAKE BUTTON
+        // =========================
         function retake() {
             clearPhotos();
             sessionStorage.removeItem('eigenbooth_frame');
             sessionStorage.removeItem('eigenbooth_filter');
             location.href = 'index.html';
         }
+
+
+        // =========================
+        // DOWNLOAD STRIP
+        // =========================
+        function downloadStrip() {
+            const photos = getPhotos();
+            if (!photos || photos.length < 3) return;
+
+            const frameColors = {
+                yellow: '#FFD95A',
+                green: '#A7D676',
+                red: '#FF6766'
+            };
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            const WIDTH = 700;
+            const OUTER_PAD = 24;
+            const INNER_PAD = 20;
+            const PHOTO_H = 420;
+            const GAP = 18;
+            const FOOTER_H = 110;
+            const BORDER = 8;
+            const RADIUS = 24;
+
+            canvas.width = WIDTH;
+            canvas.height =
+                OUTER_PAD * 2 +
+                BORDER * 2 +
+                INNER_PAD * 2 +
+                PHOTO_H * 3 +
+                GAP * 2 +
+                FOOTER_H;
+
+            function roundRect(x, y, w, h, r) {
+                ctx.beginPath();
+                ctx.moveTo(x+r, y);
+                ctx.lineTo(x+w-r, y);
+                ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+                ctx.lineTo(x+w, y+h-r);
+                ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+                ctx.lineTo(x+r, y+h);
+                ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+                ctx.lineTo(x, y+r);
+                ctx.quadraticCurveTo(x, y, x+r, y);
+                ctx.closePath();
+            }
+
+            const footerImg = new Image();
+            const loadedImgs = [];
+            let loadedCount = 0;
+
+            function tryDraw() {
+                loadedCount++;
+                if (loadedCount === 4) drawStrip();
+            }
+
+            photos.forEach((src, i) => {
+                const img = new Image();
+                img.onload = tryDraw;
+                img.src = src;
+                loadedImgs[i] = img;
+            });
+
+            footerImg.onload = tryDraw;
+            footerImg.src = 'assets/cat_drawn_1.png';
+
+            function applyCanvasFilter() {
+                const filters = {
+                    none: 'none',
+                    grayscale: 'grayscale(100%)',
+                    sepia: 'sepia(80%)',
+                    warm: 'saturate(150%) hue-rotate(-15deg)',
+                    cool: 'saturate(120%) hue-rotate(30deg) brightness(1.05)',
+                    invert: 'invert(80%)'
+                };
+
+                ctx.filter = filters[filter] || 'none';
+            }
+
+            function drawStrip() {
+                const stripX = OUTER_PAD;
+                const stripY = OUTER_PAD;
+                const stripW = WIDTH - OUTER_PAD * 2;
+                const stripH = canvas.height - OUTER_PAD * 2;
+
+                // Shadow
+                ctx.fillStyle = 'rgba(0,0,0,0.18)';
+                roundRect(stripX + 10, stripY + 10, stripW, stripH, RADIUS);
+                ctx.fill();
+
+                // Border
+                ctx.fillStyle = '#222';
+                roundRect(stripX, stripY, stripW, stripH, RADIUS);
+                ctx.fill();
+
+                // Frame background
+                ctx.fillStyle = frameColors[frame] || frameColors.yellow;
+                roundRect(
+                    stripX + BORDER,
+                    stripY + BORDER,
+                    stripW - BORDER * 2,
+                    stripH - BORDER * 2,
+                    RADIUS - 6
+                );
+                ctx.fill();
+
+                const photoW = stripW - BORDER * 2 - INNER_PAD * 2;
+                let y = stripY + BORDER + INNER_PAD;
+
+                loadedImgs.forEach(img => {
+                    applyCanvasFilter();
+
+                    ctx.drawImage(
+                        img,
+                        stripX + BORDER + INNER_PAD,
+                        y,
+                        photoW,
+                        PHOTO_H
+                    );
+
+                    y += PHOTO_H + GAP;
+                });
+
+                ctx.filter = 'none';
+
+                ctx.drawImage(
+                    footerImg,
+                    stripX + BORDER + INNER_PAD,
+                    y + 6,
+                    photoW,
+                    FOOTER_H - 10
+                );
+
+                const link = document.createElement('a');
+                link.download = 'eigenbooth-strip.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }
+        }
     </script>
+
 </body>
 </html>
