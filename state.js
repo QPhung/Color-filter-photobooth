@@ -5,12 +5,20 @@ const PHOTO_KEY = "eigenbooth_photos";
 
 
 // ─────────────────────────────
-// SAVE A PHOTO
+// SAVE A SINGLE PHOTO (append)
 // ─────────────────────────────
 function savePhoto(dataURL) {
     let photos = getPhotos();
     photos.push(dataURL);
     sessionStorage.setItem(PHOTO_KEY, JSON.stringify(photos));
+}
+
+
+// ─────────────────────────────
+// SET ALL PHOTOS AT ONCE
+// ─────────────────────────────
+function setPhotos(photosArray) {
+    sessionStorage.setItem(PHOTO_KEY, JSON.stringify(photosArray));
 }
 
 

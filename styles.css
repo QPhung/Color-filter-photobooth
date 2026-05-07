@@ -91,6 +91,7 @@ body.inner {
 .red-btn    { background: var(--red);    color: white; }
 .yellow-btn { background: var(--yellow); color: var(--dark); }
 .green-btn  { background: var(--green);  color: var(--dark); }
+.blue-btn   { background: #7EC8E3;       color: var(--dark); }
 
 /* ── LAYOUT ────────────────────────────────────────── */
 .full-screen-section {
