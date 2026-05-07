@@ -17,8 +17,8 @@
         .filter-grayscale .photo-slot img { filter: grayscale(100%); }
         .filter-sepia     .photo-slot img { filter: sepia(80%); }
         .filter-warm      .photo-slot img { filter: saturate(150%) hue-rotate(-15deg); }
-        .filter-cool      .photo-slot img { filter: saturate(120%) hue-rotate(30deg) brightness(1.05); }
-        .filter-invert    .photo-slot img { filter: invert(80%); }
+        .filter-neon      .photo-slot img { filter: contrast(140%) saturate(180%); }
+        .filter-cyberpunk .photo-slot img { filter: hue-rotate(260deg) saturate(180%); }
 
         .end-controls {
             display: flex;
@@ -32,8 +32,8 @@
 
     <img src="assets/pie_chart.png" class="deco edge-tl">
     <img src="assets/compass.png" class="deco edge-tr">
-    <img src="assets/venn_diagram.png" class="deco edge-bl">
-    <img src="assets/pencil.png" class="deco edge-br">
+    <img src="assets/pencil.png" class="deco edge-bl">
+    <img src="assets/venn_diagram.png" class="deco edge-br">
 
     <div class="end-layout">
 
@@ -43,7 +43,7 @@
             <div class="photo-slot"></div>
 
             <div class="strip-footer">
-                <img src="assets/cat_drawn_1.png" style="width:100%;">
+                <img src="assets/cat_drawn_2.png" style="width:100%;">
             </div>
         </div>
 
@@ -139,30 +139,33 @@
             const footerImg = new Image();
             const loadedImgs = [];
             let loadedCount = 0;
+            const TOTAL_ASSETS = 4; // 3 photos + 1 footer
 
             function tryDraw() {
                 loadedCount++;
-                if (loadedCount === 4) drawStrip();
+                if (loadedCount >= TOTAL_ASSETS) drawStrip();
             }
 
             photos.forEach((src, i) => {
                 const img = new Image();
-                img.onload = tryDraw;
+                img.onload  = tryDraw;
+                img.onerror = tryDraw; // don't block draw if an asset fails
                 img.src = src;
                 loadedImgs[i] = img;
             });
 
-            footerImg.onload = tryDraw;
+            footerImg.onload  = tryDraw;
+            footerImg.onerror = tryDraw;
             footerImg.src = 'assets/cat_drawn_1.png';
 
             function applyCanvasFilter() {
                 const filters = {
-                    none: 'none',
-                    grayscale: 'grayscale(100%)',
-                    sepia: 'sepia(80%)',
-                    warm: 'saturate(150%) hue-rotate(-15deg)',
-                    cool: 'saturate(120%) hue-rotate(30deg) brightness(1.05)',
-                    invert: 'invert(80%)'
+                    none:       'none',
+                    grayscale:  'grayscale(100%)',
+                    sepia:      'sepia(80%)',
+                    warm:       'saturate(150%) hue-rotate(-15deg)',
+                    neon:       'contrast(140%) saturate(180%)',
+                    cyberpunk:  'hue-rotate(260deg) saturate(180%)'
                 };
 
                 ctx.filter = filters[filter] || 'none';
@@ -225,7 +228,9 @@
                 const link = document.createElement('a');
                 link.download = 'eigenbooth-strip.png';
                 link.href = canvas.toDataURL('image/png');
+                document.body.appendChild(link);
                 link.click();
+                document.body.removeChild(link);
             }
         }
     </script>
