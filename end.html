@@ -43,7 +43,7 @@
             <div class="photo-slot"></div>
 
             <div class="strip-footer">
-                <img src="assets/cat_drawn_2.png" style="width:50%;">
+                <img src="assets/cat_drawn_2.png", style="width:50%">
             </div>
         </div>
 
@@ -91,148 +91,252 @@
         // =========================
         // DOWNLOAD STRIP
         // =========================
-        function downloadStrip() {
-            const photos = getPhotos();
-            if (!photos || photos.length < 3) return;
+    function downloadStrip() {        
+        const photos = getPhotos();
+        if (!photos || photos.length < 3) return;
 
-            const frameColors = {
-                yellow: '#FFD95A',
-                green: '#A7D676',
-                red: '#FF6766'
-            };
+        const frameColors = {
+            yellow: '#FFD95A',
+            green: '#A7D676',
+            red: '#FF6766'
+        };
 
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
 
-            const WIDTH = 700;
-            const OUTER_PAD = 24;
-            const INNER_PAD = 20;
-            const PHOTO_H = 420;
-            const GAP = 18;
-            const FOOTER_H = 110;
-            const BORDER = 8;
-            const RADIUS = 24;
+        // Better photobooth proportions
+        const WIDTH = 500;
 
-            canvas.width = WIDTH;
-            canvas.height =
-                OUTER_PAD * 2 +
-                BORDER * 2 +
-                INNER_PAD * 2 +
-                PHOTO_H * 3 +
-                GAP * 2 +
-                FOOTER_H;
+        const OUTER_PAD = 24;
+        const INNER_PAD = 20;
 
-            function roundRect(x, y, w, h, r) {
-                ctx.beginPath();
-                ctx.moveTo(x+r, y);
-                ctx.lineTo(x+w-r, y);
-                ctx.quadraticCurveTo(x+w, y, x+w, y+r);
-                ctx.lineTo(x+w, y+h-r);
-                ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
-                ctx.lineTo(x+r, y+h);
-                ctx.quadraticCurveTo(x, y+h, x, y+h-r);
-                ctx.lineTo(x, y+r);
-                ctx.quadraticCurveTo(x, y, x+r, y);
-                ctx.closePath();
-            }
+        const GAP = 18;
 
-            const footerImg = new Image();
-            const loadedImgs = [];
-            let loadedCount = 0;
-            const TOTAL_ASSETS = 4; // 3 photos + 1 footer
+        // Bigger footer area
+        const FOOTER_H = 140;
 
-            function tryDraw() {
-                loadedCount++;
-                if (loadedCount >= TOTAL_ASSETS) drawStrip();
-            }
+        const BORDER = 8;
+        const RADIUS = 24;
 
-            photos.forEach((src, i) => {
-                const img = new Image();
-                img.onload  = tryDraw;
-                img.onerror = tryDraw; // don't block draw if an asset fails
-                img.src = src;
-                loadedImgs[i] = img;
-            });
+        const PHOTO_H = 520;
 
-            footerImg.onload  = tryDraw;
-            footerImg.onerror = tryDraw;
-            footerImg.src = 'assets/cat_drawn_1.png';
+        canvas.width = WIDTH;
 
-            function applyCanvasFilter() {
-                const filters = {
-                    none:       'none',
-                    grayscale:  'grayscale(100%)',
-                    sepia:      'sepia(80%)',
-                    warm:       'saturate(150%) hue-rotate(-15deg)',
-                    neon:       'contrast(140%) saturate(180%)',
-                    cyberpunk:  'hue-rotate(260deg) saturate(180%)'
-                };
+        canvas.height =
+            OUTER_PAD * 2 +
+            BORDER * 2 +
+            INNER_PAD * 2 +
+            PHOTO_H * 3 +
+            GAP * 2 +
+            FOOTER_H;
 
-                ctx.filter = filters[filter] || 'none';
-            }
+        function roundRect(x, y, w, h, r) {
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + w - r, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+            ctx.lineTo(x + w, y + h - r);
+            ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+            ctx.lineTo(x + r, y + h);
+            ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+            ctx.lineTo(x, y + r);
+            ctx.quadraticCurveTo(x, y, x + r, y);
+            ctx.closePath();
+        }
 
-            function drawStrip() {
-                const stripX = OUTER_PAD;
-                const stripY = OUTER_PAD;
-                const stripW = WIDTH - OUTER_PAD * 2;
-                const stripH = canvas.height - OUTER_PAD * 2;
+        const footerImg = new Image();
+        const loadedImgs = [];
 
-                // Shadow
-                ctx.fillStyle = 'rgba(0,0,0,0.18)';
-                roundRect(stripX + 10, stripY + 10, stripW, stripH, RADIUS);
-                ctx.fill();
+        let loadedCount = 0;
+        const TOTAL_ASSETS = 4;
 
-                // Border
-                ctx.fillStyle = '#222';
-                roundRect(stripX, stripY, stripW, stripH, RADIUS);
-                ctx.fill();
+        function tryDraw() {
+            loadedCount++;
 
-                // Frame background
-                ctx.fillStyle = frameColors[frame] || frameColors.yellow;
-                roundRect(
-                    stripX + BORDER,
-                    stripY + BORDER,
-                    stripW - BORDER * 2,
-                    stripH - BORDER * 2,
-                    RADIUS - 6
-                );
-                ctx.fill();
-
-                const photoW = stripW - BORDER * 2 - INNER_PAD * 2;
-                let y = stripY + BORDER + INNER_PAD;
-
-                loadedImgs.forEach(img => {
-                    applyCanvasFilter();
-
-                    ctx.drawImage(
-                        img,
-                        stripX + BORDER + INNER_PAD,
-                        y,
-                        photoW,
-                        PHOTO_H
-                    );
-
-                    y += PHOTO_H + GAP;
-                });
-
-                ctx.filter = 'none';
-
-                ctx.drawImage(
-                    footerImg,
-                    stripX + BORDER + INNER_PAD,
-                    y + 6,
-                    photoW,
-                    FOOTER_H - 10
-                );
-
-                const link = document.createElement('a');
-                link.download = 'eigenbooth-strip.png';
-                link.href = canvas.toDataURL('image/png');
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+            if (loadedCount >= TOTAL_ASSETS) {
+                drawStrip();
             }
         }
+
+        photos.forEach((src, i) => {
+            const img = new Image();
+
+            img.onload = tryDraw;
+            img.onerror = tryDraw;
+
+            img.src = src;
+
+            loadedImgs[i] = img;
+        });
+
+        footerImg.onload = tryDraw;
+        footerImg.onerror = tryDraw;
+        footerImg.src = 'assets/cat_drawn_2.png';
+
+        function applyCanvasFilter() {
+            const filters = {
+                none: 'none',
+                grayscale: 'grayscale(100%)',
+                sepia: 'sepia(80%)',
+                warm: 'saturate(150%) hue-rotate(-15deg)',
+                neon: 'contrast(140%) saturate(180%)',
+                cyberpunk: 'hue-rotate(260deg) saturate(180%)'
+            };
+
+            ctx.filter = filters[filter] || 'none';
+        }
+
+        // FIT instead of COVER
+        // Prevents giant zoom/cropping
+        function drawFitImage(img, x, y, w, h) {
+            const imgRatio = img.width / img.height;
+            const frameRatio = w / h;
+
+            let drawW, drawH;
+
+            if (imgRatio > frameRatio) {
+                drawW = w;
+                drawH = w / imgRatio;
+            } else {
+                drawH = h;
+                drawW = h * imgRatio;
+            }
+
+            const dx = x + (w - drawW) / 2;
+            const dy = y + (h - drawH) / 2;
+
+            ctx.drawImage(img, dx, dy, drawW, drawH);
+        }
+
+        function drawStrip() {
+            const stripX = OUTER_PAD;
+            const stripY = OUTER_PAD;
+
+            const stripW = WIDTH - OUTER_PAD * 2;
+            const stripH = canvas.height - OUTER_PAD * 2;
+
+            // Shadow
+            ctx.fillStyle = 'rgba(0,0,0,0.18)';
+
+            roundRect(
+                stripX + 10,
+                stripY + 10,
+                stripW,
+                stripH,
+                RADIUS
+            );
+
+            ctx.fill();
+
+            // Border
+            ctx.fillStyle = '#222';
+
+            roundRect(
+                stripX,
+                stripY,
+                stripW,
+                stripH,
+                RADIUS
+            );
+
+            ctx.fill();
+
+            // Background
+            ctx.fillStyle = frameColors[frame] || frameColors.yellow;
+
+            roundRect(
+                stripX + BORDER,
+                stripY + BORDER,
+                stripW - BORDER * 2,
+                stripH - BORDER * 2,
+                RADIUS - 6
+            );
+
+            ctx.fill();
+
+            const photoW =
+                stripW -
+                BORDER * 2 -
+                INNER_PAD * 2;
+
+            let y =
+                stripY +
+                BORDER +
+                INNER_PAD;
+
+            loadedImgs.forEach(img => {
+                applyCanvasFilter();
+
+                const px =
+                    stripX +
+                    BORDER +
+                    INNER_PAD;
+
+                const py = y;
+
+                // Rounded photo frame
+                ctx.save();
+
+                roundRect(
+                    px,
+                    py,
+                    photoW,
+                    PHOTO_H,
+                    22
+                );
+
+                ctx.clip();
+
+                // White photo background
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(px, py, photoW, PHOTO_H);
+
+                drawFitImage(
+                    img,
+                    px,
+                    py,
+                    photoW,
+                    PHOTO_H
+                );
+
+                ctx.restore();
+
+                y += PHOTO_H + GAP;
+            });
+
+            ctx.filter = 'none';
+
+            // Footer image FITS instead of stretches
+            const footerW = photoW * 0.42;
+
+            const footerX =
+                stripX +
+                BORDER +
+                INNER_PAD;
+
+            drawFitImage(
+                footerImg,
+                footerX,
+                y + 10,
+                footerW,
+                FOOTER_H - 20
+            );
+
+            // Download
+            const link = document.createElement('a');
+
+            link.download = 'eigenbooth-strip.png';
+
+            link.href =
+                canvas.toDataURL('image/png');
+
+            document.body.appendChild(link);
+
+            link.click();
+
+            document.body.removeChild(link);
+        }
+    }
     </script>
 
 </body>
